@@ -25,7 +25,7 @@ python3 -m venv install -r requirements.txt
 
 Build with
 ```sh
-docker build -t pii_splicing
+docker build . -t pii_splicing
 ```
 
 # Usage
