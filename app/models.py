@@ -1,0 +1,74 @@
+import json
+from pathlib import Path
+from typing import Any, Optional
+import re
+
+import ollama
+
+from pii_identification import Entity
+
+DEFAULT_PROMPT = """Identify last names, addresses, locations, events, organizations, and unique achievements from the given text. Return each entity as an item in a JSON array.
+
+Example output:
+[
+    {{"type": "last_name", "value": "Covac"}},
+    {{"type": "location", "value": "Tatte at Back Bay"}}
+]
+
+Input: {text}"""
+
+def create_prompt(model: str, text: str, custom_prompt: Optional[str]):
+    """Create a formatted prompt to identify PII entities for the given model.
+    If a custom prompt is provided, use that instead.
+    The prompt should have a {text} format string that will be replaced with the text to redact.
+    """
+    if custom_prompt:
+        return custom_prompt.format(text=text)
+    return DEFAULT_PROMPT.format(text=text)
+
+MARKDOWN_EXTRACT_PATTERN = re.compile(r".*?```(?:json)?\s*(.+)```.*$", flags=re.MULTILINE | re.DOTALL)
+
+def parse_model_output(model: str, output: str) -> "list[Entity]":
+    """Parse the output of the model into a list of Entity objects."""
+    match = MARKDOWN_EXTRACT_PATTERN.match(output)
+    if match:
+        output = match.group(1)
+
+    try:
+        result: "list[Entity]" = []
+        for entity in json.loads(output):
+            if (
+                "type" not in entity
+                or not isinstance(entity["type"], str)
+                or not entity["type"]
+                or "value" not in entity
+                or not isinstance(entity["value"], str)
+                or not entity["value"]
+            ):
+                continue
+            result.append(Entity(**entity))
+        return result
+    except json.JSONDecodeError as e:
+        raise ValueError(f"Could not parse model output: {output}") from e
+
+def identify_pii(text: str, model: str, options: "dict[Any, Any]", custom_prompt: Optional[str] = None) -> "list[Entity]":
+    response = ollama.chat(model=model, messages=[
+        {
+            "role": "system",
+            "content": "You are a helpful assistant helping to redact personal information. Respond in JSON.",
+        },
+        {
+            "role": "user",
+            "content": create_prompt(model, text, custom_prompt),
+        },
+    ], options=options)
+
+    if not response.message or not response.message.content:
+        raise ValueError(f"Model {model} did not return any content")
+    
+    print(response.message.content)
+    
+    return parse_model_output(model, response.message.content)
+
+def identify_pii_from_file(input_file_path: Path, model: str, options: "dict[Any, Any]", custom_prompt: Optional[str] = None) -> "list[Entity]":
+    return identify_pii(input_file_path.read_text(), model, options, custom_prompt)
