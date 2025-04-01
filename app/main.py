@@ -5,7 +5,7 @@ from dataclasses import asdict
 import sys
 from typing import TextIO
 
-from app.reports import generate_html_report
+from reports import generate_html_report
 import models
 import pii_identification
 from redaction import redact_text
@@ -27,7 +27,8 @@ def process_file_html_out(input_file: TextIO, output_file: TextIO, model: str):
     text = input_file.read()
     entities = models.identify_pii(text, model, {})
 
-    generate_html_report(text, [e.value for e in entities], output_file)
+    html_output = generate_html_report(text, [e.value for e in entities])
+    output_file.write(html_output)
 
 
 def process_path_json_out(input_path: Path, output_dir: Path, model: str):
@@ -37,7 +38,7 @@ def process_path_json_out(input_path: Path, output_dir: Path, model: str):
 
 def process_path_html_out(input_path: Path, output_dir: Path, model: str):
     with open(input_path) as input_file:
-        with open(output_dir / input_path.with_suffix(".json").name, "w") as out_file:
+        with open(output_dir / input_path.with_suffix(".html").name, "w") as out_file:
             process_file_html_out(input_file, out_file, model)
 
 def main(input_paths: "list[str]", output_dir: str, model: str, output_format: str):
