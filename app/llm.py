@@ -7,11 +7,13 @@ import ollama
 
 from pii_identification import Entity
 
-DEFAULT_PROMPT = """Identify last names, addresses, locations, events, organizations, and unique achievements from the given text. Return each entity as an item in a JSON array.
+DEFAULT_PROMPT = """Identify personally identifiable information such as last names, dates, times, addresses, locations, events, and organizations from the given text. Return each entity as separate JSON item. Don't include items for categories not detected. Respond only with JSON, without any prefixes or suffixes.
 
+Example input: My friends Blake Covac and John Smith used to live at Tatte at Back Bay.
 Example output:
 [
     {{"type": "last_name", "value": "Covac"}},
+    {{"type": "last_name", "value": "Smith"}},
     {{"type": "location", "value": "Tatte at Back Bay"}}
 ]
 
@@ -29,27 +31,25 @@ def create_prompt(model: str, text: str, custom_prompt: Optional[str]):
 MARKDOWN_EXTRACT_PATTERN = re.compile(r".*?```(?:json)?\s*(.+)```.*$", flags=re.MULTILINE | re.DOTALL)
 
 def parse_model_output(model: str, output: str) -> "list[Entity]":
-    """Parse the output of the model into a list of Entity objects."""
+    """Parse the output of the model into a list of Entity objects.
+    Raises JSONDecodeError if the model's output was unable to be parsed"""
     match = MARKDOWN_EXTRACT_PATTERN.match(output)
     if match:
         output = match.group(1)
 
-    try:
-        result: "list[Entity]" = []
-        for entity in json.loads(output):
-            if (
-                "type" not in entity
-                or not isinstance(entity["type"], str)
-                or not entity["type"]
-                or "value" not in entity
-                or not isinstance(entity["value"], str)
-                or not entity["value"]
-            ):
-                continue
-            result.append(Entity(**entity))
-        return result
-    except json.JSONDecodeError as e:
-        raise ValueError(f"Could not parse model output: {output}") from e
+    result: "list[Entity]" = []
+    for entity in json.loads(output):
+        if (
+            "type" not in entity
+            or not isinstance(entity["type"], str)
+            or not entity["type"]
+            or "value" not in entity
+            or not isinstance(entity["value"], str)
+            or not entity["value"]
+        ):
+            continue
+        result.append(Entity(**entity))
+    return result
 
 def identify_pii(text: str, model: str, options: "dict[Any, Any]", custom_prompt: Optional[str] = None) -> "list[Entity]":
     response = ollama.chat(model=model, messages=[
