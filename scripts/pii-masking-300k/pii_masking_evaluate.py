@@ -78,9 +78,9 @@ for file in Path("out").glob("*.json"):
 
 
 print("TP", total_true_positives)
-print("FN", total_false_negatives)
 print("TN", total_true_negatives)
 print("FP", total_false_positives)
+print("FN", total_false_negatives)
 print("Non matches", total_non_matches)
 print("Errors", error_count)
 print("Total files", total_files)

@@ -80,3 +80,12 @@ Current supported models are
 - phi4 (14B parameters)
 - llama3.3 (70B parameters)
 
+Additional models can be added by modifying the Dockerbuild to pull the new models.
+
+# Performance metrics
+Result of Phi4 on the first 500 rows of [https://huggingface.co/datasets/ai4privacy/pii-masking-300k](pii-masking-300k), where each word in the input text is considered a separate token and identified tokens not part of the source text are ignored.
+- Precision: 91.8%
+- Recall: 84.6%
+- F1: 88.1%
+
+These results can be reproduced by first exporting the dataset as text files with `scripts/pii-masking-300k/export_pii_masking.py`. Next, run the app through the generated files. Finally, run scripts `scripts/pii-masking-300k/pii_masking_evaluation.py`

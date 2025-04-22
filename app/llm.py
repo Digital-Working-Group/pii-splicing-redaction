@@ -7,7 +7,7 @@ import ollama
 
 from pii_identification import Entity
 
-DEFAULT_PROMPT = """Identify personally identifiable information such as last names, dates, times, addresses, locations, events, and organizations from the given text. Return each entity as separate JSON item. Don't include items for categories not detected. Respond only with JSON, without any prefixes or suffixes.
+DEFAULT_PROMPT = """Identify personally identifiable information in the given text such as last names, usernames, dates, times, addresses, locations, IDs, emails, and sex. Return each entity as separate JSON item. Don't include items for categories not detected. Respond only with JSON, without any prefixes or suffixes.
 
 Example input: My friends Blake Covac and John Smith used to live at Tatte at Back Bay.
 Example output:
