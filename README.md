@@ -88,4 +88,14 @@ Result of Phi4 on the first 500 rows of [https://huggingface.co/datasets/ai4priv
 - Recall: 84.6%
 - F1: 88.1%
 
-These results can be reproduced by first exporting the dataset as text files with `scripts/pii-masking-300k/export_pii_masking.py`. Next, run the app through the generated files. Finally, run scripts `scripts/pii-masking-300k/pii_masking_evaluation.py`
+These results can be reproduced by first exporting the dataset as text files with `scripts/pii-masking-300k/export_pii_masking.py`. Next, run the app over the generated files to make predictions with the models on each row. Finally, run scripts `scripts/pii-masking-300k/pii_masking_evaluation.py`.
+
+Run this script in the root of the repo:
+```bash
+mkdir data out
+cd data
+python3 ../scripts/pii-masking-300k/export_pii_masking_300k.py
+cd ..
+docker run --gpus=all -v ./data:/input -v ./out:/output pii_splicing --model phi4 /input/ -o /output/ --output_format html
+python3 scripts/pii_masking_evaluate.py
+```
