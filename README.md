@@ -75,10 +75,10 @@ docker run --gpus=all -v ./redaction:/data pii_splicing --model llama3.2 /data/t
 ```
 
 # Models
-Current supported models are
-- llama3.2 (3B parameters)
-- phi4 (14B parameters)
-- llama3.3 (70B parameters)
+Current supported models and approximate GPU VRAM requirements are:
+- llama3.2 (3B parameters), 2 GB
+- phi4 (14B parameters), 14 GB
+- llama3.3 (70B parameters), 50 GB
 
 Additional models can be added by modifying the Dockerbuild to pull the new models.
 
