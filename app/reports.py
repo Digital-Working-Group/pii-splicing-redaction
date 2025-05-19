@@ -1,5 +1,5 @@
+"""reports.py"""
 from typing import TextIO
-
 
 def generate_html_report(text: str, predicted_entities: "list[str]"):
     from rich.table import Table

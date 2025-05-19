@@ -1,13 +1,24 @@
-"""main.py"""
+"""redact_pii.py"""
 
 import argparse
+import json
 from pathlib import Path
+from dataclasses import asdict
 import sys
+from typing import TextIO
+from reports import generate_html_report
+import llm
+import pii_identification
+from redaction import redact_text
 from process_out import process_file_html_out, process_file_json_out, process_path_html_out, process_path_json_out
 
-def run_redaction(input_paths: "list[str]", output_dir: str, model: str, output_format: str):
+def run_redaction(input_paths, **kwargs):
+    output_dir = kwargs.get("output_dir", "./data/output")
+    output_format = kwargs.get("output_format", "json")
+    model = kwargs.get("model", "llama3.2")
+
     output_dir_path = Path(output_dir)
-    if args.input_paths[0] == "-":
+    if input_paths[0] == "-":
         input_file = sys.stdin
 
         if output_format == "html":
@@ -17,7 +28,7 @@ def run_redaction(input_paths: "list[str]", output_dir: str, model: str, output_
             with open(Path(output_dir) / "stdin.json", "w") as output_file:
                 process_file_json_out(input_file, output_file, model)
     else:
-        for input_path in args.input_paths:
+        for input_path in input_paths:
             input_path = Path(input_path)
             if input_path.is_dir():
                 for file in input_path.glob("*.txt"):
@@ -31,12 +42,17 @@ def run_redaction(input_paths: "list[str]", output_dir: str, model: str, output_
                 else:
                     process_path_json_out(input_path, output_dir_path, model)
 
-if __name__ == "__main__":
-    parser = argparse.ArgumentParser()
-    parser.add_argument("input_paths", nargs="+")
-    parser.add_argument("-o", "--output_dir", default="/data/output")
-    parser.add_argument("--output_format", choices=["json", "html"], default="json")
-    parser.add_argument("--model", default="llama3.2")
-    args = parser.parse_args()
+def main():
+    ## Sample
+    input_paths =  ["./sample_redaction/sample_input/test.txt"]
 
-    run_redaction(args.input_paths, args.output_dir, args.model, args.output_format)
+    kwargs = {
+        "output_dir": "./sample_redaction/sample_output",
+        "output_format": "json",
+        "model": "llama3.2"
+    }
+
+    run_redaction(input_paths,**kwargs)
+
+if __name__ == "__main__":
+    main()
