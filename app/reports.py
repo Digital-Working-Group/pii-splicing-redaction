@@ -1,11 +1,14 @@
 """reports.py"""
+import os
 from typing import TextIO
 
 def generate_html_report(text: str, predicted_entities: "list[str]"):
     from rich.table import Table
     from rich.console import Console
 
-    with open("/dev/null", "w") as f:
+    devnull = "nul" if os.name == "nt" else "/dev/null"
+
+    with open(devnull, "w") as f:
         console = Console(record=True, file=f)
 
         # # Find matches and store them

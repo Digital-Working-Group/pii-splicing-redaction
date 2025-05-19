@@ -13,7 +13,7 @@ from redaction import redact_text
 from process_out import process_file_html_out, process_file_json_out, process_path_html_out, process_path_json_out
 
 def run_redaction(input_paths, **kwargs):
-    output_dir = kwargs.get("output_dir", "./data/output")
+    output_dir = kwargs.get("output_dir", "./sample_redaction/sample_output")
     output_format = kwargs.get("output_format", "json")
     model = kwargs.get("model", "llama3.2")
 
@@ -44,15 +44,11 @@ def run_redaction(input_paths, **kwargs):
 
 def main():
     ## Sample
-    input_paths =  ["./sample_redaction/sample_input/test.txt"]
 
-    kwargs = {
-        "output_dir": "./sample_redaction/sample_output",
-        "output_format": "json",
-        "model": "llama3.2"
-    }
+    kwargs = {"output_format": "html"}
 
-    run_redaction(input_paths,**kwargs)
+    run_redaction(["./sample_redaction/sample_input/test.txt"])
+    run_redaction(["./sample_redaction/sample_input/test.txt"], **kwargs)
 
 if __name__ == "__main__":
     main()

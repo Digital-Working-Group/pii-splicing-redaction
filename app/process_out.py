@@ -29,7 +29,7 @@ def process_file_json_out(input_file: TextIO, output_file: TextIO, model: str):
             redacted_text=redacted_text,
         )
 
-    json.dump(asdict(results), output_file)
+    json.dump(asdict(results), output_file, indent=4)
 
 def process_file_html_out(input_file: TextIO, output_file: TextIO, model: str):
     text = input_file.read()

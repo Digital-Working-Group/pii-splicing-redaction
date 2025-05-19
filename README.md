@@ -90,7 +90,7 @@ python3 main.py pii_splicing [-h] [-o OUTPUT_DIR] [--write_html] [--model MODEL]
 The `app/redact_pii.run_redaction()`  function takes in an input paths list (`input_paths`) and a set of keyword arguments:
 | Keyword Argument | Type | Description | Default Value |
 |---|---|---|---|
-| output_dir | str | Output directory where JSON result files will be written. | "./data/output" |
+| output_dir | str | Output directory where JSON result files will be written. | "./sample_redaction/sample_output" |
 | output_format | str | Defines the output file type. It must either be JSON or HTML | JSON |
 | model | The language model to use. | llama3.2 |
 
@@ -98,25 +98,37 @@ The `app/redact_pii.run_redaction()`  function takes in an input paths list (`in
 Assuming that your text files are in a folder called `sample_redaction/sample_input` and
 the folder `sample_redactions/sample_output` exists to hold the redaction output,
 use the commands below to use the llama3.2 model for redaction.
-With Docker:
+The main.py script can be run using the format below:
 ```sh
-docker run -v ./sample_redaction:/data pii_splicing --model llama3.2 /data/sample_input
+python3 app/main.py --model YOUR_MODEL ./YOUR_INPUT_FILEPATH -o ./YOUR_OUTPUT_FILEPATH
+```
+For instance, you could run:
+```sh
+python3 app/main.py --model llama3.2 ./sample_redaction/sample_input -o ./sample_redaction/sample_output
 ```
 
-If not using Docker,
+If using keyword arguments instead, you could perform the same actions above using this format:
 ```sh
-python3 app/main.py --model llama3.2 ./sample_redcaction/sample_input -o ./sample_redcaction/sample_output
+from app/redact_pii.py import run_redaction
+run_redaction([YOUR_INPUT_FILEPATH], OPTIONAL_KWARGS)
 ```
-Output JSON files will be in ./sample_redcaction/sample_input.
-
-If using keyword arguments instead, you could perform the same actions above by running the following commands:
+For instance, you could run:
 ```sh
 from app/redact_pii.py import run_redaction
 kwargs = { "output_dir": "./sample_redaction/sample_output", "output_format": "json", "model": "llama3.2" }
 run_redaction(["./sample_redcaction/sample_input"],**kwargs)
 ```
 
-All three examples will output a JSON file to /sample_redcaction/sample_input. 
+Using Docker, you could use this format:
+```sh
+docker run -v ./YOUR_FOLDER:/data pii_splicing --model YOUR_MODEL /data/YOUR_INPUT_FILEPATH
+```
+To use the same example as above, you could run:
+```sh
+docker run -v ./sample_redaction:/data pii_splicing --model llama3.2 /data/sample_input
+```
+
+All three examples will output a JSON file to /sample_redaction/smaple_output. 
 
 ### GPU
 If using GPUs with Docker, use the Docker `--gpus` flag before the image name. For example,
