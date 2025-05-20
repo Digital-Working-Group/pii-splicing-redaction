@@ -49,7 +49,7 @@ pip install -r requirements.txt
 ### With Docker
 [Docker](https://docs.docker.com/engine/install/) is required for building and running the docker container. Docker version 24.0.6, build ed223bc was used to develop and test these scripts.
 
-Run the necessary docker build commands provided in the `build_docker.sh` and `run_docker.sh` scripts. These .sh scripts were tested on Linux (CentOS 7).
+Run the necessary docker build command:
 ```sh
 docker build . -t pii_splicing
 ```
@@ -78,7 +78,7 @@ python3 main.py pii_splicing [-h] [-o OUTPUT_DIR] [--write_html] [--model MODEL]
 ```
 
 | Flag | Description | Default Value |
-|---|---|---|---|
+|---|---|---|
 | -h | If included, describes the script's args. | None |
 | -o | Output directory where JSON result files will be written. | "/data/output" |
 | --write_html | If included, generates an html file.  | None |
