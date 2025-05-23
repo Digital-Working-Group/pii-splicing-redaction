@@ -84,8 +84,8 @@ python3 main.py pii_splicing [-h] [-o OUTPUT_DIR] [--write_html] [--model MODEL]
 | --write_html | If included, generates an HTML file.  | None |
 | --output_format | Defines the output file type. It must either be JSON or HTML. | JSON |
 | --model | The language model to use. | "llama3.2" |
-| --seed | The random number seed to use for generation. | None, Ollama default is 42 |
-| --temperature | The temperature (creativity) of the model. | None, Ollama default is 0.7 |
+| --seed | The random number seed to use for generation. | None, Ollama default random |
+| --temperature | The temperature (creativity) of the model. | None, Ollama default is 0.8 |
 | input_paths | List of paths to input files or directories. If a directory is specified, only files with the `.txt` extension are processed. | None |
 
 ## Arguments in `app/redact_pii.py`:
@@ -95,8 +95,8 @@ The `app/redact_pii.run_redaction()`  function takes in an input paths list (`in
 | output_dir | str | Output directory where JSON result files will be written. | "./sample_redaction/sample_output" |
 | output_format | str | Defines the output file type. It must either be JSON or HTML. | JSON |
 | model | str | The language model to use. | llama3.2 |
-| seed | int | The random number seed to use for generation. | None, Ollama default is 42 |
-| temperature | float | The temperature (creativity) of the model. | None, Ollama default is 0.7 |
+| seed | int | The random number seed to use for generation. | None, Ollama default is random |
+| temperature | float | The temperature (creativity) of the model. | None, Ollama default is 0.8 |
 
 ## Usage Example
 Assuming that your text files are in a folder called `sample_redaction/sample_input` and
