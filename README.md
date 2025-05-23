@@ -70,11 +70,11 @@ One suggested approach is to mount the text data into "/data" in the container.
 
 ## Arguments in `app/main.py`:
 ```sh
-docker run pii_splicing [-h] [-o OUTPUT_DIR] [--write_html] [--model MODEL] input_paths [input_paths ...]
+docker run pii_splicing [-h] [-o OUTPUT_DIR] [--write_html] [--model MODEL] [--seed SEED] [--temperature TEMPERATURE]input_paths [input_paths ...]
 ```
 or
 ```sh
-python3 main.py pii_splicing [-h] [-o OUTPUT_DIR] [--write_html] [--model MODEL] input_paths [input_paths ...]
+python3 main.py pii_splicing [-h] [-o OUTPUT_DIR] [--write_html] [--model MODEL] [--seed SEED] [--temperature TEMPERATURE] input_paths [input_paths ...]
 ```
 
 | Flag | Description | Default Value |
@@ -84,7 +84,8 @@ python3 main.py pii_splicing [-h] [-o OUTPUT_DIR] [--write_html] [--model MODEL]
 | --write_html | If included, generates an HTML file.  | None |
 | --output_format | Defines the output file type. It must either be JSON or HTML. | JSON |
 | --model | The language model to use. | "llama3.2" |
-| --seed | int | The random number seed to use for generation. | None, Ollama default is 42 |
+| --seed | The random number seed to use for generation. | None, Ollama default is 42 |
+| --temperature | The temperature (creativity) of the model. | None, Ollama default is 0.7 |
 | input_paths | List of paths to input files or directories. If a directory is specified, only files with the `.txt` extension are processed. | None |
 
 ## Arguments in `app/redact_pii.py`:
