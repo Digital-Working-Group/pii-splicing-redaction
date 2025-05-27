@@ -158,19 +158,36 @@ Current supported models and approximate GPU VRAM requirements are:
 Additional models can be added by modifying the Dockerbuild to pull the new models.
 
 # Performance metrics
-Result of Phi4 on the first 500 rows of [https://huggingface.co/datasets/ai4privacy/pii-masking-300k](pii-masking-300k), where each word in the input text is considered a separate token and identified tokens not part of the source text are ignored.
+Result of Phi4 on the first 500 rows of [pii-masking-300k](https://huggingface.co/datasets/ai4privacy/pii-masking-300k), where each word in the input text is considered a separate token and identified tokens not part of the source text are ignored.
 - Precision: 91.8%
 - Recall: 84.6%
 - F1: 88.1%
 
 These results can be reproduced by first exporting the dataset as text files with `scripts/pii-masking-300k/export_pii_masking.py`. Next, run the app over the generated files to make predictions with the models on each row. Finally, run scripts `scripts/pii-masking-300k/pii_masking_evaluation.py`.
 
-Run this script in the root of the repo:
+If you are not already logged into the huggingface CLI from your machine, you will need to provide a user token. To do so, please copy the contents of `scripts/pii-masking-300k/read_token_template.py` into `scripts/pii-masking-300k/read_token.py` and edit the path in the repository to point to the text file holding your token. For more help, please see the official documenation [user tokens](https://huggingface.co/docs/hub/en/security-tokens) or the [huggingface CLI](https://huggingface.co/docs/huggingface_hub/en/guides/cli).
+
+Run either of the following scripts in the root starting at the root of the repo.
+With Docker:
 ```bash
 mkdir data out
 cd data
 python3 ../scripts/pii-masking-300k/export_pii_masking_300k.py
 cd ..
-docker run --gpus=all -v ./data:/input -v ./out:/output pii_splicing --model phi4 /input/ -o /output/ --output_format html
-python3 scripts/pii_masking_evaluate.py
+docker run --gpus=all -v ./data:/input -v ./out:/output pii_splicing --model phi4 /input/ -o /output/ --output_format json
+python3 scripts/pii-masking-300k/pii_masking_evaluate.py
 ```
+docker run -v ./sample_redaction:/data pii_splicing --model llama3.2 /data/sample_input
+python app/main.py --model llama3.2 ./data -o ./out
+
+Without Docker:
+```sh
+mkdir data, out
+cd data
+python ../scripts/pii-masking-300k/export_pii_masking_300k.py
+cd ..
+python app/main.py --model llama3.2 ./data -o ./out
+python scripts/pii-masking-300k/pii_masking_evaluate.py
+```
+
+The default settings will pull 10 files from the `pii-masking-300k` dataset and write them to txt file s in the /data folder. The script will output a JSON file for every TXT file containing the redacted PII, as well as two summaries in the /out/summaries folder. The summary JSON contains a list of the filenames, the starting timestamp, and the counts different each status. The summary XLSX contains columns describing the file, word, and status of that word. 
