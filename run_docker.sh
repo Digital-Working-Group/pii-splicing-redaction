@@ -4,8 +4,9 @@
 CONTAINER_NAME="pii_splicing_container"
 IMAGE_NAME="pii_splicing"
 MODEL_VERSION="llama3.2"
-SEED=42
-TEMP=0.7
+OUTPUT_FORMAT="json"
+SEED=0
+TEMP=0.8
 INPUT_FILE="sample_input"
 HOST_DIR="./sample_redaction"
 CONTAINER_DIR="/data"
@@ -23,6 +24,10 @@ while [[ $# -gt 0 ]]; do
       ;;
     --model)
       MODEL_VERSION="$2"
+      shift 2
+      ;;
+    --output_format)
+      OUTPUT_FORMAT="$2"
       shift 2
       ;;
     --seed)
@@ -54,4 +59,4 @@ done
 
 HOST_DIR_ABS=$(realpath "$HOST_DIR")
 
-docker run -v "$HOST_DIR_ABS":"$CONTAINER_DIR" -it --rm --name "$CONTAINER_NAME" "$IMAGE_NAME" --model "$MODEL_VERSION" --seed "$SEED" --temperature "$TEMP" "$CONTAINER_DIR/$INPUT_FILE"
+docker run -v "$HOST_DIR_ABS":"$CONTAINER_DIR" -it --rm --name "$CONTAINER_NAME" "$IMAGE_NAME" --model "$MODEL_VERSION" --output_format "$OUTPUT_FORMAT" --seed "$SEED" --temperature "$TEMP" "$CONTAINER_DIR/$INPUT_FILE"

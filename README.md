@@ -98,6 +98,11 @@ The `app/redact_pii.run_redaction()`  function takes in an input paths list (`in
 | seed | int | The random number seed to use for generation. | None, Ollama default is random |
 | temperature | float | The temperature (creativity) of the model. | None, Ollama default is 0.8 |
 
+For more details on optional arguments, please see [Ollama's official documentation][https://ollama.readthedocs.io/en/modelfile/#valid-parameters-and-values]. To see if your version of Ollama has any different default options different from the official documentation, you can run:
+```sh
+ollama show --parameters YOUR-MODEL
+```
+
 ## Usage Example
 Assuming that your text files are in a folder called `sample_redaction/sample_input` and
 the folder `sample_redactions/sample_output` exists to hold the redaction output,
