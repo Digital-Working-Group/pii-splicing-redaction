@@ -10,6 +10,7 @@ import pii_identification
 from redaction import redact_text
 
 def process_file_json_out(input_file: TextIO, output_file: TextIO, model: str, options: dict):
+    """Identify PII, redact, and output redaction to a JSON"""
     text = input_file.read()
     try:
         entities = llm.identify_pii(text, model, options)
@@ -32,6 +33,7 @@ def process_file_json_out(input_file: TextIO, output_file: TextIO, model: str, o
     json.dump(asdict(results), output_file, indent=4)
 
 def process_file_html_out(input_file: TextIO, output_file: TextIO, model: str, options: dict):
+    """Identify PII, redact, and output redaction to an HTML"""
     text = input_file.read()
     try:
         entities = llm.identify_pii(text, model, options)
@@ -44,13 +46,15 @@ def process_file_html_out(input_file: TextIO, output_file: TextIO, model: str, o
 
 
 def process_path_json_out(input_path: Path, output_dir: Path, model: str, options: dict):
+    """Creates output directory write JSON file."""
     Path(output_dir).mkdir(parents=True, exist_ok=True)
-    with open(input_path) as input_file:
+    with open(input_path, encoding='utf-8') as input_file:
         with open(output_dir / input_path.with_suffix(".json").name, "w", encoding='utf-8') as out_file:
             process_file_json_out(input_file, out_file, model, options)
 
 def process_path_html_out(input_path: Path, output_dir: Path, model: str, options: dict):
+    """Creates output directory write HTML file."""
     Path(output_dir).mkdir(parents=True, exist_ok=True)
-    with open(input_path) as input_file:
+    with open(input_path, encoding='utf-8') as input_file:
         with open(output_dir / input_path.with_suffix(".html").name, "w", encoding='utf-8') as out_file:
             process_file_html_out(input_file, out_file, model, options)

@@ -1,14 +1,12 @@
 """reports.py"""
 import os
-from typing import TextIO
+from rich.console import Console
 
 def generate_html_report(text: str, predicted_entities: "list[str]"):
-    from rich.table import Table
-    from rich.console import Console
-
+    """Format HTML output summary"""
     devnull = "nul" if os.name == "nt" else "/dev/null"
 
-    with open(devnull, "w") as f:
+    with open(devnull, "w", encoding="utf-8") as f:
         console = Console(record=True, file=f)
         
         # First highlight all AI found values in purple

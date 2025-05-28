@@ -6,6 +6,7 @@ import sys
 from process_out import process_file_html_out, process_file_json_out, process_path_html_out, process_path_json_out
 
 def run_redaction(input_paths: "list[str]", output_dir: str, model: str, output_format: str, temperature: float, seed: int):
+    """Pass through arguments to process input files, create redacted output files."""
     options = {}
     if temperature is not None:
         options['temperature'] = float(temperature)
@@ -16,25 +17,20 @@ def run_redaction(input_paths: "list[str]", output_dir: str, model: str, output_
         input_file = sys.stdin
 
         if output_format == "html":
-            with open(Path(output_dir) / "stdin.html", "w") as output_file:
+            with open(Path(output_dir) / "stdin.html", "w", encoding="utf-8") as output_file:
                 process_file_html_out(input_file, output_file, model, options)
         else:
-            with open(Path(output_dir) / "stdin.json", "w") as output_file:
+            with open(Path(output_dir) / "stdin.json", "w", encoding="utf-8") as output_file:
                 process_file_json_out(input_file, output_file, model, options)
     else:
         for input_path in args.input_paths:
             input_path = Path(input_path)
+            process_func = process_path_html_out if output_format == "html" else process_path_json_out
             if input_path.is_dir():
                 for file in input_path.glob("*.txt"):
-                    if output_format == "html":
-                        process_path_html_out(file, output_dir_path, model, options)
-                    else:
-                        process_path_json_out(file, output_dir_path, model, options)
+                    process_func(file, output_dir_path, model, options)
             else:
-                if output_format == "html":
-                    process_path_html_out(input_path, output_dir_path, model, options)
-                else:
-                    process_path_json_out(input_path, output_dir_path, model, options)
+                process_func(input_path, output_dir_path, model, options)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
