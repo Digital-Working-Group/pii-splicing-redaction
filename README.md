@@ -19,7 +19,8 @@ This repository contains a tool to redact PII using local large language models 
 8. [Performance Metrics with Docker](#performance-metrics-1)
 9. [Models](#models)
 10. [Performance Testing](#performance-testing)
-11. [Citations](#citations)
+11. [Acknowledgements](#acknowledgement)
+12. [Citations](#citations)
 
 # About Redacting PII
 See `app/main.py` and `app/redact_pii.py` for examples. Both will produce the same output given the same input, but `app/main.py` is written to use arguments passed with flags and `app/redact_pii.py` uses keyword arguments. 
@@ -140,7 +141,14 @@ cd ..
 python app/main.py --model llama3.2 ./data -o ./out
 python scripts/pii-masking-300k/pii_masking_evaluate.py
 ```
-The default settings will pull 10 files from the `pii-masking-300k` dataset and write them to txt file s in the /data folder. The script will output a JSON file for every TXT file containing the redacted PII, as well as two summaries in the /out/summaries folder. The summary JSON contains a list of the filenames, the starting timestamp, and the counts different each status. The summary XLSX contains columns describing the file, word, and status of that word. 
+The default settings will pull 10 files from the `pii-masking-300k` dataset and write them to txt file s in the /data folder. To calculate the counts for the summary, the script iterates over the source text one word at a time, comparing each word to the list of predicted entities (PII identified by the LLM) and the list of target entities (the dataset's privacy mask). Each word will be identified as one of the following:
+  - True positive: found in both the target entries and the predicted entries
+  - False positives: not found in the target entries, but found in the predicted entries
+  - True negatives: found in neither the target entries nor the predicted entries
+  - False negatives: found in the target entries, but not found in the predicted entries
+If a word occurs multiple times within the text, each occurence will be counted in the summary.
+
+The script will output a JSON file for every TXT file containing the redacted PII, as well as two summaries in the /out/summaries folder. The summary JSON contains a list of the filenames, the starting timestamp, and the counts different each status. The summary XLSX contains columns describing the file, word, and status of that word. 
 
 # With Docker
 ## Installation
@@ -202,7 +210,14 @@ cd ..
 docker run --gpus=all -v ./data:/input -v ./out:/output pii_splicing --model phi4 /input/ -o /output/ --output_format json
 python3 scripts/pii-masking-300k/pii_masking_evaluate.py
 ```
-The default settings will pull 10 files from the `pii-masking-300k` dataset and write them to txt file s in the /data folder. The script will output a JSON file for every TXT file containing the redacted PII, as well as two summaries in the /out/summaries folder. The summary JSON contains a list of the filenames, the starting timestamp, and the counts different each status. The summary XLSX contains columns describing the file, word, and status of that word. 
+The default settings will pull 10 files from the `pii-masking-300k` dataset and write them to TXT files in the /data folder. To calculate the counts for the summary, the script iterates over the source text one word at a time, comparing each word to the list of predicted entities (PII identified by the LLM) and the list of target entities (the dataset's privacy mask). Each word will be identified as one of the following:
+  - True positive: found in both the target entries and the predicted entries
+  - False positives: not found in the target entries, but found in the predicted entries
+  - True negatives: found in neither the target entries nor the predicted entries
+  - False negatives: found in the target entries, but not found in the predicted entries
+If a word occurs multiple times within the text, each occurence will be counted in the summary.
+
+The script will output a JSON file for every TXT file containing the redacted PII, as well as two summaries in the /out/summaries folder. The summary JSON contains a list of the filenames, the starting timestamp, and the counts different each status. The summary XLSX contains columns describing the file, word, and status of that word. 
 
 # Models
 Current supported models and approximate GPU VRAM requirements are:
@@ -220,5 +235,18 @@ Result of Phi4 on the first 500 rows of [pii-masking-300k](https://huggingface.c
 
 These results can be reproduced by running the performance metric scripts either [using Docker](#performance-metrics-1) or [without Docker](#performance-metrics) by adjusting the `set_size` to 500 in `scripts/pii-masking-300k/export_pii_masking_300k.py`.
 
+# Acknowledgement
+- [Ollama](https://github.com/ollama/ollama): Large Language Models run locally (License Ollama)
+
 # Citations
-TODO
+If you use this in your research, please cite the Huggingface dataset:
+```bibtex
+@misc{ai4privacy_2024,
+	author       = { Ai4Privacy },
+	title        = { pii-masking-300k (Revision 86db63b) },
+	year         = 2024,
+	url          = { https://huggingface.co/datasets/ai4privacy/pii-masking-300k },
+	doi          = { 10.57967/hf/1995 },
+	publisher    = { Hugging Face }
+}
+```

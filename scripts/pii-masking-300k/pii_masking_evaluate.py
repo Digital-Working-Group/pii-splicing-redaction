@@ -69,8 +69,9 @@ def evaluate():
         counts_dict['total_files'] += 1
 
         ds_row = dataset[row_index]
-        if "errors" in ds_row:
+        if "errors" in json_data:
             counts_dict['error_count'] += 1
+            continue
 
         target_entities = set()
         for entity in ds_row["privacy_mask"]:
