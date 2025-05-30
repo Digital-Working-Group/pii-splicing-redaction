@@ -154,7 +154,7 @@ if __name__ == '__main__':
     main()
 
 ```
-This will result in a JSON file containing the identified PII, source text, redacted text, and any errors to /sample_redaction/sample_output.
+The first run_redaction() call will result in a JSON file and the second will result in an HTML file. Both will contain the identified PII, source text, redacted text, and any errors to /sample_redaction/sample_output.
 
 # Performance Metrics
 If you are not already logged into the huggingface CLI from your machine, you will need to provide a user token. To do so, copy your user token into a TXT file. Then, copy the contents of `scripts/pii-masking-300k/read_token_template.py` into `scripts/pii-masking-300k/read_token.py` and edit the path in the repository to point to the text file holding your token. 
