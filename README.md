@@ -92,7 +92,6 @@ python main.py pii_splicing [-h] [-o OUTPUT_DIR] [--write_html] [--model MODEL] 
 |---|---|---|
 | -h | If included, describes the script's args. | None |
 | -o | Output directory where JSON result files will be written. | "/data/output" |
-| --write_html | If included, generates an HTML file.  | None |
 | --output_format | Defines the output file type. It must either be JSON or HTML. | JSON |
 | --model | The language model to use. | "llama3.2" |
 | --seed | The random number seed to use for generation. | None, Ollama defaults to a random value. |
@@ -111,6 +110,9 @@ For instance, you could run:
 python app/main.py --model llama3.2 ./sample_redaction/sample_input -o ./sample_redaction/sample_output
 ```
 This will result in a JSON file containing the identified PII, source text, redacted text, and any errors to /sample_redaction/sample_output. 
+
+### Sample Input and Output Files
+This repository provides a sample TXT file, which can be found in `sample_redaction/sample_input/`. Each audio file's metadata is captured in a JSON and CSV file. For audio files that were generated via examples here, the parameters and functions used are also included in the metadata files. The functions used to generate the metadata files can be found in metadata.py and example usage can be seen in run_metadata.py.
 
 # Running this tool: Programmatic Interface
 ## Arguments
