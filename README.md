@@ -112,7 +112,7 @@ python app/main.py --model llama3.2 ./sample_redaction/sample_input -o ./sample_
 This will result in a JSON file containing the identified PII, source text, redacted text, and any errors to /sample_redaction/sample_output. 
 
 ### Sample Input and Output Files
-This repository provides a sample TXT file, which can be found in `sample_redaction/sample_input/`. Each audio file's metadata is captured in a JSON and CSV file. For audio files that were generated via examples here, the parameters and functions used are also included in the metadata files. The functions used to generate the metadata files can be found in metadata.py and example usage can be seen in run_metadata.py.
+This repository provides a sample TXT file, which can be found in `sample_redaction/sample_input/`. Running the redaction tool on this file produces the sample output JSON, which can be found in `sample_redaction/sample_output`.
 
 # Running this tool: Programmatic Interface
 ## Arguments
@@ -144,6 +144,9 @@ kwargs = { "output_dir": "./sample_redaction/sample_output", "output_format": "j
 run_redaction(["./sample_redaction/sample_input"], **kwargs)
 ```
 This will result in a JSON file containing the identified PII, source text, redacted text, and any errors to /sample_redaction/sample_output.
+
+### Sample Input and Output Files
+This repository provides a sample TXT file, which can be found in `sample_redaction/sample_input/`. Running the redaction tool on this file produces the sample output JSON, which can be found in `sample_redaction/sample_output`.
 
 # Performance Metrics
 If you are not already logged into the huggingface CLI from your machine, you will need to provide a user token. To do so, copy your user token into a TXT file. Then, copy the contents of `scripts/pii-masking-300k/read_token_template.py` into `scripts/pii-masking-300k/read_token.py` and edit the path in the repository to point to the text file holding your token. 
