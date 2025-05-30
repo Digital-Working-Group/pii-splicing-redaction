@@ -19,7 +19,7 @@ This repository contains a tool to redact PII (personally identifiable informati
 10. [Citations](#citations)
 
 # About Redacting PII
-See `app/main.py` and `app/redact_pii.py` for examples. Both will produce the same output given the same input, but `app/main.py` is written as a command line interface (CLI) and `app/redact_pii.py` uses keyword arguments via a programmatic interface. Please see the [CLI](#running-this-tool-command-line-interface-cli) and [progammatic interface](#running-this-tool-programmatic-interface) instructions respectively.
+See `main.py` and `redact_pii.py` for examples. Both will produce the same output given the same input, but `main.py` is written as a command line interface (CLI) and `redact_pii.py` uses keyword arguments via a programmatic interface. Please see the [CLI](#running-this-tool-command-line-interface-cli) and [progammatic interface](#running-this-tool-programmatic-interface) instructions respectively.
 
 The tool expects the text to be redacted in plain text format.
 Extracted entities and redacted text are outputted in JSON format.
@@ -74,13 +74,13 @@ docker build . -t pii_splicing
 ```
 Run a docker container (named temp_pii_splicing):
 ```sh
-docker run -v "$(pwd)/sample_redaction:/sample_redaction" -it -rm --name temp_pii_splicing pii_splicing
+docker run -v "$(pwd):/entry" -it --rm --name temp_pii_splicing pii_splicing
 ```
 
 ### GPU
 If using GPUs with Docker, use the Docker `--gpus` flag before the image name. For example,
 ```sh
-docker run --gpus=all -v "$(pwd)/sample_redaction:/sample_redaction" -it -rm --name temp_pii_splicing pii_splicing
+docker run --gpus=all -v "$(pwd):/entry" -it --rm --name temp_pii_splicing pii_splicing
 ```
 
 # Running this tool: Command Line Interface (CLI)
@@ -98,16 +98,16 @@ python main.py pii_splicing [-h] [-o OUTPUT_DIR] [--write_html] [--model MODEL] 
 | --temperature | The temperature (creativity) of the model. | None, Ollama defaults to 0.8. |
 | input_paths | List of paths to input files or directories. If a directory is specified, only files with the `.txt` extension are processed. | None |
 
-See `app/main.py` for CLI script implementation.
+See `main.py` for CLI script implementation.
 
 ## Usage Example
 Assuming that your text files are in a folder called `sample_redaction/sample_input` and the folder `sample_redaction/sample_output` exists to store the redaction output, use the following command to use the llama3.2 model for redaction:
 ```sh
-python app/main.py --model YOUR_MODEL ./YOUR_INPUT_FILEPATH -o ./YOUR_OUTPUT_FILEPATH
+python main.py --model YOUR_MODEL ./YOUR_INPUT_FILEPATH -o ./YOUR_OUTPUT_FILEPATH
 ```
 For instance, you could run:
 ```sh
-python app/main.py --model llama3.2 ./sample_redaction/sample_input -o ./sample_redaction/sample_output
+python main.py --model llama3.2 ./sample_redaction/sample_input -o ./sample_redaction/sample_output
 ```
 This will result in a JSON file containing the identified PII, source text, redacted text, and any errors to /sample_redaction/sample_output. 
 
@@ -116,7 +116,7 @@ This repository provides a sample TXT file, which can be found in `sample_redact
 
 # Running this tool: Programmatic Interface
 ## Arguments
-The `app/redact_pii.run_redaction()`  function takes in an input paths list (`input_paths`) and a set of keyword arguments, described below.
+The `redact_pii.run_redaction()`  function takes in an input paths list (`input_paths`) and a set of keyword arguments, described below.
 | Keyword Argument | Type | Description | Default Value |
 |---|---|---|---|
 | output_dir | str | Output directory where output files (HTML or JSON) will be written. | "./sample_redaction/sample_output" |
@@ -129,21 +129,32 @@ For more details on optional arguments, please see [Ollama's official documentat
 ```sh
 ollama show --parameters YOUR-MODEL
 ```
-See `app/redact_pii.py` for the script's implementation and to adjust any keyword arguments.
+See `redact_pii.py` for the script's implementation and to adjust any keyword arguments.
 
 ### Usage Example
 Assuming that your text files are in a folder called `sample_redaction/sample_input` and the folder `sample_redaction/sample_output` exists to store the redaction output, use the following command to use the llama3.2 model for redaction:
 ```py
-from app.redact_pii.py import run_redaction
+from redact_pii import run_redaction
 run_redaction([YOUR_INPUT_FILEPATH], OPTIONAL_KWARGS)
 ```
-For instance, you could run:
+For instance, you could run (please see `sample_run.py`):
 ```py
-from app.redact_pii.py import run_redaction
-kwargs = { "output_dir": "./sample_redaction/sample_output", "output_format": "json", "model": "llama3.2" }
-run_redaction(["./sample_redaction/sample_input"], **kwargs)
+from redact_pii import run_redaction
+
+def main():
+    """
+    main entrypoint
+    """
+    kwargs = {"output_dir": "./sample_redaction/sample_output", "output_format": "json", "model": "llama3.2"}
+    run_redaction(["./sample_redaction/sample_input"], **kwargs)
+    kwargs = {"output_dir": "./sample_redaction/sample_output", "output_format": "html", "model": "llama3.2"}
+    run_redaction(["./sample_redaction/sample_input"], **kwargs)
+
+if __name__ == '__main__':
+    main()
+
 ```
-This will result in a JSON file containing the identified PII, source text, redacted text, and any errors to /sample_redaction/sample_output.
+The first run_redaction() call will result in a JSON file and the second will result in an HTML file. Both will contain the identified PII, source text, redacted text, and any errors to /sample_redaction/sample_output.
 
 ### Sample Input and Output Files
 This repository provides a sample TXT file, which can be found in `sample_redaction/sample_input/`. Running the redaction tool on this file produces the sample output JSON, which can be found in `sample_redaction/sample_output`.
@@ -151,9 +162,9 @@ This repository provides a sample TXT file, which can be found in `sample_redact
 # Performance Metrics
 If you are not already logged into the huggingface CLI from your machine, you will need to provide a user token. To do so, copy your user token into a TXT file. Then, copy the contents of `scripts/pii-masking-300k/read_token_template.py` into `scripts/pii-masking-300k/read_token.py` and edit the path in the repository to point to the text file holding your token. 
 
-If you are using Docker, you will need to mount the file containing the token. Place the TXT file containing your user token into the `tokens` folder on this repository (not version controlled). Update the path in `scripts/pii-masking-300k/read_token.py` and re-run the container to mount:
+If you are using Docker, you will need to mount the file containing the token. By default, the recommended docker run commands will mount your current working directory, which may include your token file. If not, you need to mount the folder or the specific file that has the token file `docker run -v path_to_token_dir:/entry/some_dir`. Update the path in `scripts/pii-masking-300k/read_token.py` and re-run the container to mount:
 ```sh
-docker run --gpus=all -v "$(pwd)/sample_redaction:/sample_redaction" -v "$(pwd)/tokens:/tokens" -it --rm --name temp_pii_splicing pii_splicing
+docker run --gpus=all -v "$(pwd):/entry" -it --rm --name temp_pii_splicing pii_splicing
 ```
 
 For more help, please see the official documentation [user tokens](https://huggingface.co/docs/hub/en/security-tokens) or the [huggingface CLI](https://huggingface.co/docs/huggingface_hub/en/guides/cli).
@@ -164,7 +175,7 @@ mkdir data, out
 cd data
 python ../scripts/pii-masking-300k/export_pii_masking_300k.py
 cd ..
-python app/main.py --model llama3.2 ./data -o ./out
+python main.py --model llama3.2 ./data -o ./out
 python scripts/pii-masking-300k/pii_masking_evaluate.py
 ```
 or
@@ -173,7 +184,7 @@ mkdir data out
 cd data
 python3 ../scripts/pii-masking-300k/export_pii_masking_300k.py
 cd ..
-python3 app/main.py --model llama3.2 ./data -o ./out
+python3 main.py --model llama3.2 ./data -o ./out
 python3 scripts/pii-masking-300k/pii_masking_evaluate.py
 ```
 The default settings will pull 10 files from the `pii-masking-300k` dataset and write them to txt files in the /data folder. To calculate the counts for the summary, the script iterates over the source text one word at a time, comparing each word to the list of predicted entities (PII identified by the LLM) and the list of target entities (the dataset's privacy mask). Each word will be identified as one of the following:
