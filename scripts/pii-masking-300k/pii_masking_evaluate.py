@@ -69,7 +69,7 @@ def evaluate():
         counts_dict['total_files'] += 1
 
         ds_row = dataset[row_index]
-        if "errors" in json_data:
+        if json_data['errors'] != []:
             counts_dict['error_count'] += 1
             continue
 

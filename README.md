@@ -21,10 +21,10 @@ This repository contains a tool to redact PII (personally identifiable informati
 # About Redacting PII
 See `main.py` and `redact_pii.py` for examples. Both will produce the same output given the same input, but `main.py` is written as a command line interface (CLI) and `redact_pii.py` uses keyword arguments via a programmatic interface. Please see the [CLI](#running-this-tool-command-line-interface-cli) and [progammatic interface](#running-this-tool-programmatic-interface) instructions respectively.
 
-The tool expects the text to be redacted in plain text format.
-Extracted entities and redacted text are outputted in JSON format.
+The tool expects plain text files as input.
+Extracted entities and redacted text are outputted in JSON or HTML format.
 
-Output files are named after the input text file, but with the extension changed from `.txt` to `.json`. For example, if the input file was named `story1.txt`, then the output file name would be `story1.json`.
+Output files are named after the input text file, but with the extension changed from `.txt` to `.json` or `.html`. For example, if the input file was named `story1.txt`, then the output file name would be `story1.json`.
 
 # Installation
 ## Without Docker
@@ -41,7 +41,13 @@ Install Ollama according to [the official instructions.](https://ollama.com/down
 ```sh
 ollama --version
 ```
-See the [Models](#models) section below for more information on model compatibility.
+4. Pull the necessary model(s) for usage via Ollama. This should only need to be run once:
+
+```sh
+ollama pull llama3.2
+```
+
+See the [Models](#models) section below for more information on a few models.
 
 The requirements.txt file can be used to install the necessary libraries to a virtual environment without Docker.
 
@@ -57,12 +63,12 @@ Activate your virtual environment:
 
 or with Windows:
 ```sh
-py3-9-6_venv\Scripts\activate
+venv\Scripts\activate
 ```
 
-Install requirements based on your Python version:
+Install requirements:
 ```sh
-pip install -r py3-13-1_requirements.txt
+pip install -r requirements.txt
 ```
 
 ## With Docker
@@ -86,7 +92,7 @@ docker run --gpus=all -v "$(pwd):/entry" -it --rm --name temp_pii_splicing pii_s
 # Running this tool: Command Line Interface (CLI)
 ## Arguments
 ```sh
-python main.py pii_splicing [-h] [-o OUTPUT_DIR] [--write_html] [--model MODEL] [--seed SEED] [--temperature TEMPERATURE] input_paths [input_paths ...]
+python main.py pii_splicing [-h] [-o OUTPUT_DIR] [--model MODEL] [--seed SEED] [--temperature TEMPERATURE] input_paths [input_paths ...]
 ```
 | Flag | Description | Default Value |
 |---|---|---|
@@ -125,7 +131,7 @@ The `redact_pii.run_redaction()`  function takes in an input paths list (`input_
 | seed | int | The random number seed to use for generation. | None, Ollama defaults to a random value. |
 | temperature | float | The temperature (creativity) of the model. | None, Ollama defaults to 0.8. |
 
-For more details on optional arguments, please see [Ollama's official documentation][https://ollama.readthedocs.io/en/modelfile/#valid-parameters-and-values]. To see if your version of Ollama has any different default options different from the official documentation, you can run:
+For more details on optional arguments, please see [Ollama's official documentation](https://ollama.readthedocs.io/en/modelfile/#valid-parameters-and-values). To see if your version of Ollama has any different default options different from the official documentation, you can run:
 ```sh
 ollama show --parameters YOUR-MODEL
 ```
@@ -177,7 +183,7 @@ For more help, please see the official documentation [user tokens](https://huggi
 
 To evaluate the performance of this model, run the script below starting from the root of the repo:
 ```sh
-mkdir data, out
+mkdir data out
 cd data
 python ../scripts/pii-masking-300k/export_pii_masking_300k.py
 cd ..

@@ -37,14 +37,3 @@ def run_redaction(input_paths, **kwargs):
                     process_func(file, output_dir_path, model, options)
             else:
                 process_func(input_path, output_dir_path, model, options)
-
-def main():
-    """Define kwargs and call run_redaction"""
-    kwargs = {"output_format": "html",
-              "seed": 30}
-
-    run_redaction(["./sample_redaction/sample_input/test.txt"])
-    run_redaction(["./sample_redaction/sample_input/test.txt"], **kwargs)
-
-if __name__ == "__main__":
-    main()
