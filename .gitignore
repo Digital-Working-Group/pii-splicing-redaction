@@ -177,6 +177,7 @@ cython_debug/
 
 # Private Scripts
 read_token.py
+tokens/
 
 # Pylint
 pylintrc
