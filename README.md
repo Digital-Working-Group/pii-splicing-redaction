@@ -35,7 +35,7 @@ python --version
 
 Install Ollama according to [the official instructions.](https://ollama.com/download)
 1. Install Ollama for your OS (operating system).
-2. Add the folder containing ollama.exe to your Environment Variables.
+2. If needed (Ollama may do this by default), add the folder containing ollama.exe to your Environment Variables.
     - On Windows: (Windows Key -> Edit environment variables for your account). Edit Path -> New -> Enter the path.
 3. Verify your installation with the command:
 ```sh
@@ -57,7 +57,7 @@ Activate your virtual environment:
 
 or with Windows:
 ```sh
-.venv/Scripts/activate
+py3-9-6_venv\Scripts\activate
 ```
 
 Install requirements based on your Python version:
