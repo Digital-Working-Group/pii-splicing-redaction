@@ -160,7 +160,13 @@ The first run_redaction() call will result in a JSON file and the second will re
 This repository provides a sample TXT file, which can be found in `sample_redaction/sample_input/`. Running the redaction tool on this file produces the sample output JSON, which can be found in `sample_redaction/sample_output`.
 
 # Performance Metrics
-If you are not already logged into the huggingface CLI from your machine, you will need to provide a user token. To do so, copy your user token into a TXT file. Then, copy the contents of `scripts/pii-masking-300k/read_token_template.py` into `scripts/pii-masking-300k/read_token.py` and edit the path in the repository to point to the text file holding your token. 
+If you are not already logged into the Huggingface CLI from your machine, you will need to provide a user token. To create and access your user token, follow the steps below:
+    1. Go to [Huggingface's user token page](huggingface.co/settings/tokens)
+    2. Create a new token 
+    3. Select the token type **Read**, name, and create the token
+    4. Copy the token into a text file 
+    5. Copy the contents of `scripts/pii-masking-300k/read_token_template.py` into `scripts/pii-masking-300k/read_token.py`
+    6. Edit the path in the repository to point to the text file holding your token. 
 
 If you are using Docker, you will need to mount the file containing the token. By default, the recommended docker run commands will mount your current working directory, which may include your token file. If not, you need to mount the folder or the specific file that has the token file `docker run -v path_to_token_dir:/entry/some_dir`. Update the path in `scripts/pii-masking-300k/read_token.py` and re-run the container to mount:
 ```sh
