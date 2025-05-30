@@ -74,13 +74,13 @@ docker build . -t pii_splicing
 ```
 Run a docker container (named temp_pii_splicing):
 ```sh
-docker run -v "$(pwd)/sample_redaction:/sample_redaction" -it --name temp_pii_splicing pii_splicing
+docker run -v "$(pwd)/sample_redaction:/sample_redaction" -it -rm --name temp_pii_splicing pii_splicing
 ```
 
 ### GPU
 If using GPUs with Docker, use the Docker `--gpus` flag before the image name. For example,
 ```sh
-docker run --gpus=all -v "$(pwd)/sample_redaction:/sample_redaction" -it --name temp_pii_splicing pii_splicing
+docker run --gpus=all -v "$(pwd)/sample_redaction:/sample_redaction" -it -rm --name temp_pii_splicing pii_splicing
 ```
 
 # Running this tool: Command Line Interface (CLI)
@@ -148,7 +148,7 @@ If you are not already logged into the huggingface CLI from your machine, you wi
 
 If you are using Docker, you will need to mount the file containing the token. Place the TXT file containing your user token into the `tokens` folder on this repository (not version controlled). Update the path in `scripts/pii-masking-300k/read_token.py` and re-run the container to mount:
 ```sh
-docker run --gpus=all -v "$(pwd)/sample_redaction:/sample_redaction" -v "$(pwd)/tokens:/tokens" -it --name temp_pii_splicing pii_splicing
+docker run --gpus=all -v "$(pwd)/sample_redaction:/sample_redaction" -v "$(pwd)/tokens:/tokens" -it --rm --name temp_pii_splicing pii_splicing
 ```
 
 For more help, please see the official documentation [user tokens](https://huggingface.co/docs/hub/en/security-tokens) or the [huggingface CLI](https://huggingface.co/docs/huggingface_hub/en/guides/cli).
