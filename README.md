@@ -196,18 +196,18 @@ Current supported models and approximate GPU VRAM requirements are:
 
 Additional models can be added by modifying the Docker build to pull the new models.
 
-# Acknowledgement
-- [Ollama](https://github.com/ollama/ollama): Large Language Models run locally (License Ollama)
+# Acknowledgements
+- [Ollama.](https://github.com/ollama/ollama)
 
 # Citations
 If you use this in your research, please cite the Huggingface dataset:
 ```bibtex
 @misc{ai4privacy_2024,
-	author       = { Ai4Privacy },
-	title        = { pii-masking-300k (Revision 86db63b) },
-	year         = 2024,
-	url          = { https://huggingface.co/datasets/ai4privacy/pii-masking-300k },
-	doi          = { 10.57967/hf/1995 },
-	publisher    = { Hugging Face }
+	author={ Ai4Privacy },
+	title={ pii-masking-300k (Revision 86db63b) },
+	year=2024,
+	url={ https://huggingface.co/datasets/ai4privacy/pii-masking-300k },
+	doi={ 10.57967/hf/1995 },
+	publisher={ Hugging Face }
 }
 ```
