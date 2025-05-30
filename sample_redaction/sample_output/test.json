@@ -1,0 +1,31 @@
+{
+    "entities": [
+        {
+            "type": "last_name",
+            "value": "Rivers"
+        },
+        {
+            "type": "name",
+            "value": "Ethan"
+        },
+        {
+            "type": "first_name",
+            "value": "Sarah"
+        },
+        {
+            "type": "date",
+            "value": "summer camp"
+        },
+        {
+            "type": "location",
+            "value": "Cascade Valley"
+        },
+        {
+            "type": "location",
+            "value": "Lake Serenity"
+        }
+    ],
+    "source_text": "I stood at the edge of Lake Serenity, the sun glistening on the water's surface. \"Do you remember when we built that terrible raft for the summer camp?\" I asked Sarah, grinning. Her laughter echoed in my ears, reminding me of our countless summer adventures here in Cascade Valley.\n\n\"Of course! You insisted we could float on those old crates,\" she replied, brushing a strand of her sun-kissed hair behind her ear. \"I still can\u2019t believe we almost sank!\"\n\nAs kids, we had lofty dreams. I, Ethan Rivers, had my sights set on becoming the youngest environmental scientist in the state, while Sarah aimed to win the annual Cascade Valley Art Fair with her stunning paintings of the local landscape. \n\nJust then, a group of teenagers raced by, their laughter slicing through the nostalgia. \"What do you think they\u2019re up to?\" I pondered aloud, taking in the vibrant scene.\n\n\"Probably planning their own summer escapades,\" she said, her blue eyes sparkling. \"You know, like we used to.\"\n\nI smiled, knowing no matter where life took us, the memories of those carefree days would forever remain etched in my heart, shaped by the shimmering waves of Lake Serenity.\n",
+    "redacted_text": "I stood at the edge of <PII>, the sun glistening on the water's surface. \"Do you remember when we built that terrible raft for the <PII>?\" I asked <PII>, grinning. Her laughter echoed in my ears, reminding me of our countless summer adventures here in <PII>.\n\n\"Of course! You insisted we could float on those old crates,\" she replied, brushing a strand of her sun-kissed hair behind her ear. \"I still can\u2019t believe we almost sank!\"\n\nAs kids, we had lofty dreams. I, <PII> <PII>, had my sights set on becoming the youngest environmental scientist in the state, while <PII> aimed to win the annual <PII> Art Fair with her stunning paintings of the local landscape. \n\nJust then, a group of teenagers raced by, their laughter slicing through the nostalgia. \"What do you think they\u2019re up to?\" I pondered aloud, taking in the vibrant scene.\n\n\"Probably planning their own summer escapades,\" she said, her blue eyes sparkling. \"You know, like we used to.\"\n\nI smiled, knowing no matter where life took us, the memories of those carefree days would forever remain etched in my heart, shaped by the shimmering waves of <PII>.\n",
+    "errors": []
+}

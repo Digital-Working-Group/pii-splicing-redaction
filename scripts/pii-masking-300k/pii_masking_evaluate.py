@@ -1,86 +1,130 @@
+"""pii_masking_evaluate.py"""
 from pathlib import Path
 import json
+import pprint
 import re
+import os
+from datetime import datetime
+import pandas as pd
+from export_pii_masking_300k import load_hugging_face_dataset
 
-import datasets
+
+def write_summary_json(output_root, counts_dict, file_list, start_time, print_summary=True):
+    """Write evaluation summary to a JSON file"""
+    print(f'outroot is {output_root}')
+    summary = {
+        "True Positives": counts_dict['total_true_positives'],
+        "True Negatives": counts_dict['total_true_negatives'],
+        "False Positives": counts_dict['total_false_positives'],
+        "False Negatives": counts_dict['total_false_negatives'],
+        "Non matches": counts_dict['total_non_matches'],
+        "Errors": counts_dict['error_count'],
+        "Total files": counts_dict['total_files'],
+        "Files": file_list,
+        "Ran at": start_time.strftime("%Y-%m-%d %H:%M:%S")
+    }
+
+    if print_summary is True:
+        pprint.pprint(summary)
+
+    json_fp = os.path.join(output_root, f'summary_{start_time.strftime("%Y%m%d_%H%M%S")}.json')
+    with open(json_fp, 'w', encoding='utf-8') as fp:
+        json.dump(summary, fp, default=str, indent=4)
+
+def write_summary_xlsx(output_root, summary_df, start_time):
+    """Write evaluation summary to an excel file"""
+    xlsx_fp = os.path.join(output_root, f'summary_{start_time.strftime("%Y%m%d_%H%M%S")}.xlsx')
+    writer = pd.ExcelWriter(xlsx_fp, engine='xlsxwriter')
+    summary_df.to_excel(writer, sheet_name='Summary', index=False)
+    for group, data in summary_df.groupby(['filename']):
+        tech_id = group[0]
+        data.drop(labels='filename', axis=1, inplace=True)
+        data.to_excel(writer, sheet_name=tech_id, index=False)
+    writer.close()
 
 
-ds = datasets.load_dataset("json", data_files="/files/hf_datasets/pii-masking-300k/data/train/1english_openpii_30k.jsonl", split="train[:500]")
+def evaluate():
+    """Evaluate PII """
+    start_time = datetime.now()
+    file_list = []
+    dataset = load_hugging_face_dataset()
+    summary_df = pd.DataFrame(columns=['filename', 'predicted_word', 'status'])
+    counts_dict = {
+        'total_true_positives': 0,
+        'total_false_positives': 0,
+        'total_true_negatives': 0,
+        'total_false_negatives': 0,
+        'total_non_matches': 0,
+        'error_count': 0,
+        'total_files': 0
+    }
 
-total_true_positives = 0
-total_false_positives = 0
-total_true_negatives = 0
-total_false_negatives = 0
-total_non_matches = 0
-error_count = 0
-total_files = 0
+    for file in Path("out").glob("*.json"):
+        file_list.append(file.name)
+        row_index = int(file.name.split(".json")[0])
+        # print(row_index)
+        with open(file, encoding='utf-8') as in_file:
+            json_data = json.load(in_file)
 
-for file in Path("out").glob("*.json"):
-    row_index = int(file.name.split(".json")[0])
-    # print(row_index)
-    with open(file) as in_file:
-        json_data = json.load(in_file)
+        counts_dict['total_files'] += 1
 
-    total_files += 1
+        ds_row = dataset[row_index]
+        if json_data['errors'] != []:
+            counts_dict['error_count'] += 1
+            continue
 
-    ds_row = ds[row_index]
-    if "errors" in ds_row:
-        error_count += 1
+        target_entities = set()
+        for entity in ds_row["privacy_mask"]:
+            for word in re.split(r"[^a-zA-Z0-9]+", entity["value"]):
+                target_entities.add(word.lower())
 
-    true_positives = 0
-    false_positives = 0
-    true_negatives = 0
-    false_negatives = 0
-    non_matches = 0
+        source_text_lower = ds_row["source_text"].lower()
 
-    target_entities = set()
-    for entity in ds_row["privacy_mask"]:
-        for word in re.split(r"[^a-zA-Z0-9]+", entity["value"]):
-            target_entities.add(word.lower())
+        predicted_entities = set()
+        for predicted_entity in json_data["entities"]:
+            for word in re.split(r"[^a-zA-Z0-9]+", predicted_entity["value"]):
+                print("Predicted word", word)
+                word = word.lower()
+                predicted_entities.add(word.lower())
+                if word not in source_text_lower:
+                    counts_dict['total_non_matches'] += 1
 
-    source_text_lower = ds_row["source_text"].lower()
+        print(target_entities)
 
-    predicted_entities = set()
-    for predicted_entity in json_data["entities"]:
-        for word in re.split(r"[^a-zA-Z0-9]+", predicted_entity["value"]):
-            print("Predicted word", word)
+        print(ds_row["privacy_mask"])
+        print(ds_row["source_text"])
+
+
+        for word in re.split(r"[^a-zA-Z0-9]+", ds_row["source_text"]):
             word = word.lower()
-            predicted_entities.add(word.lower())
-            if word not in source_text_lower:
-                non_matches += 1
 
-    print(target_entities)
+            is_predicted_pii = word in predicted_entities
+            is_true_pii = word in target_entities
+            
+            status = ''
+            if is_predicted_pii and is_true_pii:
+                counts_dict['total_true_positives'] += 1
+                status = "true_positives"
+            elif is_predicted_pii and not is_true_pii:
+                counts_dict['total_false_positives'] += 1
+                status = "false_positives"
+            elif not is_predicted_pii and is_true_pii:
+                counts_dict['total_false_negatives'] += 1
+                status = "false_negatives"
+            else:
+                counts_dict['total_true_negatives'] += 1
+                status = "true_negatives"
 
-    print(ds_row["privacy_mask"])
-    print(ds_row["source_text"])
+            summary_df.loc[len(summary_df)] = [str(file.name), word, status]
 
+    # Create output directory
+    script_dir = Path(__file__).resolve().parent
+    output_root = script_dir.parent.parent / "out/summaries"
+    output_root.mkdir(parents=True, exist_ok=True)
 
-    for word in re.split(r"[^a-zA-Z0-9]+", ds_row["source_text"]):
-        word = word.lower()
+    # Write summaries
+    write_summary_json(output_root, counts_dict, file_list, start_time, print_summary=True)
+    write_summary_xlsx(output_root, summary_df, start_time)
 
-        is_predicted_pii = word in predicted_entities
-        is_true_pii = word in target_entities
-
-        if is_predicted_pii and is_true_pii:
-            true_positives += 1
-        elif is_predicted_pii and not is_true_pii:
-            false_positives += 1
-        elif not is_predicted_pii and is_true_pii:
-            false_negatives += 1
-        else:
-            true_negatives += 1
-
-    total_true_positives += true_positives
-    total_false_negatives += false_negatives
-    total_true_negatives += true_negatives
-    total_false_positives += false_positives
-    total_non_matches += non_matches
-
-
-print("TP", total_true_positives)
-print("TN", total_true_negatives)
-print("FP", total_false_positives)
-print("FN", total_false_negatives)
-print("Non matches", total_non_matches)
-print("Errors", error_count)
-print("Total files", total_files)
+if __name__ == "__main__":
+    evaluate()

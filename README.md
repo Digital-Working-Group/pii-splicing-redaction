@@ -1,78 +1,220 @@
 # PII Splicing
 
-This repository contains a tool to redact PII using local large language models from Ollama.
+This repository contains a tool to redact PII (personally identifiable information) using local large language models via Ollama.
+
+# Table of Contents
+1. [About Redacting PII](#about-redacting-pii)
+2. [Installation without Docker](#without-docker)
+3. [Installation with Docker](#with-docker)
+4. [Running this tool - CLI](#running-this-tool-command-line-interface-cli)
+    - [Arguments](#arguments)
+    - [Usage Example](#usage-example)
+5. [Running this tool - Programmatic Interface](#running-this-tool-programmatic-interface)
+    - [Arguments](#arguments-1)
+    - [Usage Example](#usage-example-1)
+6. [Performance Metrics](#performance-metrics)
+7. [Performance Testing](#performance-testing)
+8. [Models](#models)
+9. [Acknowledgements](#acknowledgement)
+10. [Citations](#citations)
+
+# About Redacting PII
+See `main.py` and `redact_pii.py` for examples. Both will produce the same output given the same input, but `main.py` is written as a command line interface (CLI) and `redact_pii.py` uses keyword arguments via a programmatic interface. Please see the [CLI](#running-this-tool-command-line-interface-cli) and [progammatic interface](#running-this-tool-programmatic-interface) instructions respectively.
+
+The tool expects plain text files as input.
+Extracted entities and redacted text are outputted in JSON or HTML format.
+
+Output files are named after the input text file, but with the extension changed from `.txt` to `.json` or `.html`. For example, if the input file was named `story1.txt`, then the output file name would be `story1.json`.
 
 # Installation
 ## Without Docker
-
-First, install Ollama according to [the official instructions](https://ollama.com/download)
-
-Python at least version 3.8 is required.
-The requirements.txt file can be used to install the necessary libraries without Docker.
-
-Create and activate a virtual environment:
+These scripts require at least Python version 3.8 or later. Check your Python version via this command:
 ```sh
-python3 -m venv .venv
-. .venv/bin/activate
+python --version
+```
+
+Install Ollama according to [the official instructions.](https://ollama.com/download)
+1. Install Ollama for your OS (operating system).
+2. If needed (Ollama may do this by default), add the folder containing ollama.exe to your Environment Variables.
+    - On Windows: (Windows Key -> Edit environment variables for your account). Edit Path -> New -> Enter the path.
+3. Verify your installation with the command:
+```sh
+ollama --version
+```
+4. Pull the necessary model(s) for usage via Ollama. This should only need to be run once:
+
+```sh
+ollama pull llama3.2
+```
+
+See the [Models](#models) section below for more information on a few models.
+
+The requirements.txt file can be used to install the necessary libraries to a virtual environment without Docker.
+
+Create a virtual environment:
+```sh
+python -m venv .venv
+```
+
+Activate your virtual environment:
+```sh
+.venv/bin/activate
+```
+
+or with Windows:
+```sh
+venv\Scripts\activate
 ```
 
 Install requirements:
 ```sh
-python3 -m venv install -r requirements.txt
+pip install -r requirements.txt
 ```
 
-### With Docker
+## With Docker
+[Docker](https://docs.docker.com/engine/install/) is required for building and running the docker container. Docker version 24.0.6, build ed223bc was used to develop and test these scripts.
 
-Build with
+Run the necessary docker build command:
 ```sh
 docker build . -t pii_splicing
 ```
-
-# Usage
-
-The tool expects the text to be redacted in plain text format.
-Extracted entities and redacted text is output in JSON format.
-
-Output files are named after the input text file, but with the extension changed
-from `.txt` to `.json`. For example, if the input file was named `story1.txt`,
-then the output file name would be `story1.json`.
-
-When using docker, you likely want to mount your data from the host into the
-container with the Docker `-v` flag.
-One suggested approach is to mount the text data into "/data" in the container.
-
-Arguments:
+Run a docker container (named temp_pii_splicing):
 ```sh
-docker run pii_splicing [-h] [-o OUTPUT_DIR] [--write_html] [--model MODEL] input_paths [input_paths ...]
-```
-or
-```sh
-python3 main.py pii_splicing [-h] [-o OUTPUT_DIR] [--write_html] [--model MODEL] input_paths [input_paths ...]
-```
-- `input_paths` is a list of paths to input files or directories. If a directory is specified, only files with the `.txt` extension are processed
-- `-o` is the output directory to where JSON result files will be written. Default is `/data/output`
-- `--model` is the language model to use. See
-
-## Usage Example
-Assuming that your text files are in a folder called `redaction/texts` and
-the folder `redaction/output` exists to hold the redaction output,
-use this command to use the llama3.2 model for redaction:
-```sh
-docker run -v ./redaction:/data pii_splicing --model llama3.2 /data/texts
-```
-
-Output JSON files will be in `redaction/output`.
-
-If not using Docker,
-```sh
-python3 app/main.py --model llama3.2 ./redaction/texts -o ./redaction/output
+docker run -v "$(pwd):/entry" -it --rm --name temp_pii_splicing pii_splicing
 ```
 
 ### GPU
 If using GPUs with Docker, use the Docker `--gpus` flag before the image name. For example,
 ```sh
-docker run --gpus=all -v ./redaction:/data pii_splicing --model llama3.2 /data/texts
+docker run --gpus=all -v "$(pwd):/entry" -it --rm --name temp_pii_splicing pii_splicing
 ```
+
+# Running this tool: Command Line Interface (CLI)
+## Arguments
+```sh
+python main.py pii_splicing [-h] [-o OUTPUT_DIR] [--model MODEL] [--seed SEED] [--temperature TEMPERATURE] input_paths [input_paths ...]
+```
+| Flag | Description | Default Value |
+|---|---|---|
+| -h | If included, describes the script's args. | None |
+| -o | Output directory where JSON result files will be written. | "/data/output" |
+| --output_format | Defines the output file type. It must either be JSON or HTML. | JSON |
+| --model | The language model to use. | "llama3.2" |
+| --seed | The random number seed to use for generation. | None, Ollama defaults to a random value. |
+| --temperature | The temperature (creativity) of the model. | None, Ollama defaults to 0.8. |
+| input_paths | List of paths to input files or directories. If a directory is specified, only files with the `.txt` extension are processed. | None |
+
+See `main.py` for CLI script implementation.
+
+## Usage Example
+Assuming that your text files are in a folder called `sample_redaction/sample_input` and the folder `sample_redaction/sample_output` exists to store the redaction output, use the following command to use the llama3.2 model for redaction:
+```sh
+python main.py --model YOUR_MODEL ./YOUR_INPUT_FILEPATH -o ./YOUR_OUTPUT_FILEPATH
+```
+For instance, you could run:
+```sh
+python main.py --model llama3.2 ./sample_redaction/sample_input -o ./sample_redaction/sample_output
+```
+This will result in a JSON file containing the identified PII, source text, redacted text, and any errors to /sample_redaction/sample_output. 
+
+### Sample Input and Output Files
+This repository provides a sample TXT file, which can be found in `sample_redaction/sample_input/`. Running the redaction tool on this file produces the sample output JSON, which can be found in `sample_redaction/sample_output`.
+
+# Running this tool: Programmatic Interface
+## Arguments
+The `redact_pii.run_redaction()`  function takes in an input paths list (`input_paths`) and a set of keyword arguments, described below.
+| Keyword Argument | Type | Description | Default Value |
+|---|---|---|---|
+| output_dir | str | Output directory where output files (HTML or JSON) will be written. | "./sample_redaction/sample_output" |
+| output_format | str | Defines the output file type. It must either be JSON or HTML. | JSON |
+| model | str | The language model to use. | llama3.2 |
+| seed | int | The random number seed to use for generation. | None, Ollama defaults to a random value. |
+| temperature | float | The temperature (creativity) of the model. | None, Ollama defaults to 0.8. |
+
+For more details on optional arguments, please see [Ollama's official documentation](https://ollama.readthedocs.io/en/modelfile/#valid-parameters-and-values). To see if your version of Ollama has any different default options different from the official documentation, you can run:
+```sh
+ollama show --parameters YOUR-MODEL
+```
+See `redact_pii.py` for the script's implementation and to adjust any keyword arguments.
+
+### Usage Example
+Assuming that your text files are in a folder called `sample_redaction/sample_input` and the folder `sample_redaction/sample_output` exists to store the redaction output, use the following command to use the llama3.2 model for redaction:
+```py
+from redact_pii import run_redaction
+run_redaction([YOUR_INPUT_FILEPATH], OPTIONAL_KWARGS)
+```
+For instance, you could run (please see `sample_run.py`):
+```py
+from redact_pii import run_redaction
+
+def main():
+    """
+    main entrypoint
+    """
+    kwargs = {"output_dir": "./sample_redaction/sample_output", "output_format": "json", "model": "llama3.2"}
+    run_redaction(["./sample_redaction/sample_input"], **kwargs)
+    kwargs = {"output_dir": "./sample_redaction/sample_output", "output_format": "html", "model": "llama3.2"}
+    run_redaction(["./sample_redaction/sample_input"], **kwargs)
+
+if __name__ == '__main__':
+    main()
+
+```
+The first run_redaction() call will result in a JSON file and the second will result in an HTML file. Both will contain the identified PII, source text, redacted text, and any errors to /sample_redaction/sample_output.
+
+### Sample Input and Output Files
+This repository provides a sample TXT file, which can be found in `sample_redaction/sample_input/`. Running the redaction tool on this file produces the sample output JSON, which can be found in `sample_redaction/sample_output`.
+
+# Performance Metrics
+If you are not already logged into the Huggingface CLI from your machine, you will need to provide a user token. To create and access your user token, follow the steps below:
+    1. Go to [Huggingface's user token page](huggingface.co/settings/tokens)
+    2. Create a new token 
+    3. Select the token type **Read**, name, and create the token
+    4. Copy the token into a text file 
+    5. Copy the contents of `scripts/pii-masking-300k/read_token_template.py` into `scripts/pii-masking-300k/read_token.py`
+    6. Edit the path in the repository to point to the text file holding your token. 
+
+If you are using Docker, you will need to mount the file containing the token. By default, the recommended docker run commands will mount your current working directory, which may include your token file. If not, you need to mount the folder or the specific file that has the token file `docker run -v path_to_token_dir:/entry/some_dir`. Update the path in `scripts/pii-masking-300k/read_token.py` and re-run the container to mount:
+```sh
+docker run --gpus=all -v "$(pwd):/entry" -it --rm --name temp_pii_splicing pii_splicing
+```
+
+For more help, please see the official documentation [user tokens](https://huggingface.co/docs/hub/en/security-tokens) or the [huggingface CLI](https://huggingface.co/docs/huggingface_hub/en/guides/cli).
+
+To evaluate the performance of this model, run the script below starting from the root of the repo:
+```sh
+mkdir data out
+cd data
+python ../scripts/pii-masking-300k/export_pii_masking_300k.py
+cd ..
+python main.py --model llama3.2 ./data -o ./out
+python scripts/pii-masking-300k/pii_masking_evaluate.py
+```
+or
+```bash
+mkdir data out
+cd data
+python3 ../scripts/pii-masking-300k/export_pii_masking_300k.py
+cd ..
+python3 main.py --model llama3.2 ./data -o ./out
+python3 scripts/pii-masking-300k/pii_masking_evaluate.py
+```
+The default settings will pull 10 files from the `pii-masking-300k` dataset and write them to txt files in the /data folder. To calculate the counts for the summary, the script iterates over the source text one word at a time, comparing each word to the list of predicted entities (PII identified by the LLM) and the list of target entities (the dataset's privacy mask). Each word will be identified as one of the following:
+  - True positive: found in both the target entries and the predicted entries
+  - False positives: not found in the target entries, but found in the predicted entries
+  - True negatives: found in neither the target entries nor the predicted entries
+  - False negatives: found in the target entries, but not found in the predicted entries
+If a word occurs multiple times within the text, each occurrence will be counted in the summary.
+
+The script will output a JSON file for every TXT file containing the redacted PII, as well as two summaries in the /out/summaries folder. The summary JSON contains a list of the filenames, the starting timestamp, and the counts for each status. The summary XLSX contains columns describing the file, word, and status of that word. 
+
+# Performance Testing
+Result of Phi4 on the first 500 rows of [pii-masking-300k](https://huggingface.co/datasets/ai4privacy/pii-masking-300k), where each word in the input text is considered a separate token and identified tokens not part of the source text are ignored.
+- Precision: 91.8%
+- Recall: 84.6%
+- F1: 88.1%
+
+These results can be reproduced by running the [performance metric script](#performance-metrics) by adjusting the `set_size` to 500 in `scripts/pii-masking-300k/export_pii_masking_300k.py`.
 
 # Models
 Current supported models and approximate GPU VRAM requirements are:
@@ -80,22 +222,20 @@ Current supported models and approximate GPU VRAM requirements are:
 - phi4 (14B parameters), 14 GB
 - llama3.3 (70B parameters), 50 GB
 
-Additional models can be added by modifying the Dockerbuild to pull the new models.
+Additional models can be added by modifying the Docker build to pull the new models.
 
-# Performance metrics
-Result of Phi4 on the first 500 rows of [https://huggingface.co/datasets/ai4privacy/pii-masking-300k](pii-masking-300k), where each word in the input text is considered a separate token and identified tokens not part of the source text are ignored.
-- Precision: 91.8%
-- Recall: 84.6%
-- F1: 88.1%
+# Acknowledgements
+- [Ollama.](https://github.com/ollama/ollama)
 
-These results can be reproduced by first exporting the dataset as text files with `scripts/pii-masking-300k/export_pii_masking.py`. Next, run the app over the generated files to make predictions with the models on each row. Finally, run scripts `scripts/pii-masking-300k/pii_masking_evaluation.py`.
-
-Run this script in the root of the repo:
-```bash
-mkdir data out
-cd data
-python3 ../scripts/pii-masking-300k/export_pii_masking_300k.py
-cd ..
-docker run --gpus=all -v ./data:/input -v ./out:/output pii_splicing --model phi4 /input/ -o /output/ --output_format html
-python3 scripts/pii_masking_evaluate.py
+# Citations
+If you use this in your research, please cite the Huggingface dataset:
+```bibtex
+@misc{ai4privacy_2024,
+	author={ Ai4Privacy },
+	title={ pii-masking-300k (Revision 86db63b) },
+	year=2024,
+	url={ https://huggingface.co/datasets/ai4privacy/pii-masking-300k },
+	doi={ 10.57967/hf/1995 },
+	publisher={ Hugging Face }
+}
 ```

@@ -1,10 +1,9 @@
+"""llm.py"""
 import json
+import re
 from pathlib import Path
 from typing import Any, Optional
-import re
-
 import ollama
-
 from pii_identification import Entity
 
 DEFAULT_PROMPT = """Identify personally identifiable information in the given text such as last names, usernames, dates, times, addresses, locations, IDs, emails, and sex. Return each entity as separate JSON item. Don't include items for categories not detected. Respond only with JSON, without any prefixes or suffixes.
@@ -19,7 +18,7 @@ Example output:
 
 Input: {text}"""
 
-def create_prompt(model: str, text: str, custom_prompt: Optional[str]):
+def create_prompt(text: str, custom_prompt: Optional[str]):
     """Create a formatted prompt to identify PII entities for the given model.
     If a custom prompt is provided, use that instead.
     The prompt should have a {text} format string that will be replaced with the text to redact.
@@ -30,7 +29,7 @@ def create_prompt(model: str, text: str, custom_prompt: Optional[str]):
 
 MARKDOWN_EXTRACT_PATTERN = re.compile(r".*?```(?:json)?\s*(.+)```.*$", flags=re.MULTILINE | re.DOTALL)
 
-def parse_model_output(model: str, output: str) -> "list[Entity]":
+def parse_model_output(output: str) -> "list[Entity]":
     """Parse the output of the model into a list of Entity objects.
     Raises JSONDecodeError if the model's output was unable to be parsed"""
     match = MARKDOWN_EXTRACT_PATTERN.match(output)
@@ -52,6 +51,7 @@ def parse_model_output(model: str, output: str) -> "list[Entity]":
     return result
 
 def identify_pii(text: str, model: str, options: "dict[Any, Any]", custom_prompt: Optional[str] = None) -> "list[Entity]":
+    """Prompt and pass options to Ollama model and parse output."""
     response = ollama.chat(model=model, messages=[
         {
             "role": "system",
@@ -59,7 +59,7 @@ def identify_pii(text: str, model: str, options: "dict[Any, Any]", custom_prompt
         },
         {
             "role": "user",
-            "content": create_prompt(model, text, custom_prompt),
+            "content": create_prompt(text, custom_prompt),
         },
     ], options=options)
 
@@ -68,7 +68,8 @@ def identify_pii(text: str, model: str, options: "dict[Any, Any]", custom_prompt
     
     print(response.message.content)
     
-    return parse_model_output(model, response.message.content)
+    return parse_model_output(response.message.content)
 
 def identify_pii_from_file(input_file_path: Path, model: str, options: "dict[Any, Any]", custom_prompt: Optional[str] = None) -> "list[Entity]":
+    """Converts file to text for identify_pii."""
     return identify_pii(input_file_path.read_text(), model, options, custom_prompt)
