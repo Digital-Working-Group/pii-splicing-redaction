@@ -1,5 +1,5 @@
 """
-sample_main.py
+sample_run.py
 example of running run_redaction() from app.redact_pii
 """
 from redact_pii import run_redaction

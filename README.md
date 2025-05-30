@@ -74,13 +74,13 @@ docker build . -t pii_splicing
 ```
 Run a docker container (named temp_pii_splicing):
 ```sh
-docker run -v "$(pwd)/sample_redaction:/sample_redaction" -it -rm --name temp_pii_splicing pii_splicing
+docker run -v "$(pwd):/entry" -it --rm --name temp_pii_splicing pii_splicing
 ```
 
 ### GPU
 If using GPUs with Docker, use the Docker `--gpus` flag before the image name. For example,
 ```sh
-docker run --gpus=all -v "$(pwd)/sample_redaction:/sample_redaction" -it -rm --name temp_pii_splicing pii_splicing
+docker run --gpus=all -v "$(pwd):/entry" -it --rm --name temp_pii_splicing pii_splicing
 ```
 
 # Running this tool: Command Line Interface (CLI)
@@ -103,11 +103,11 @@ See `app/main.py` for CLI script implementation.
 ## Usage Example
 Assuming that your text files are in a folder called `sample_redaction/sample_input` and the folder `sample_redaction/sample_output` exists to store the redaction output, use the following command to use the llama3.2 model for redaction:
 ```sh
-python app/main.py --model YOUR_MODEL ./YOUR_INPUT_FILEPATH -o ./YOUR_OUTPUT_FILEPATH
+python main.py --model YOUR_MODEL ./YOUR_INPUT_FILEPATH -o ./YOUR_OUTPUT_FILEPATH
 ```
 For instance, you could run:
 ```sh
-python app/main.py --model llama3.2 ./sample_redaction/sample_input -o ./sample_redaction/sample_output
+python main.py --model llama3.2 ./sample_redaction/sample_input -o ./sample_redaction/sample_output
 ```
 This will result in a JSON file containing the identified PII, source text, redacted text, and any errors to /sample_redaction/sample_output. 
 
@@ -116,7 +116,7 @@ This repository provides a sample TXT file, which can be found in `sample_redact
 
 # Running this tool: Programmatic Interface
 ## Arguments
-The `app/redact_pii.run_redaction()`  function takes in an input paths list (`input_paths`) and a set of keyword arguments, described below.
+The `redact_pii.run_redaction()`  function takes in an input paths list (`input_paths`) and a set of keyword arguments, described below.
 | Keyword Argument | Type | Description | Default Value |
 |---|---|---|---|
 | output_dir | str | Output directory where output files (HTML or JSON) will be written. | "./sample_redaction/sample_output" |
@@ -134,23 +134,34 @@ See `app/redact_pii.py` for the script's implementation and to adjust any keywor
 ### Usage Example
 Assuming that your text files are in a folder called `sample_redaction/sample_input` and the folder `sample_redaction/sample_output` exists to store the redaction output, use the following command to use the llama3.2 model for redaction:
 ```py
-from app.redact_pii.py import run_redaction
+from redact_pii import run_redaction
 run_redaction([YOUR_INPUT_FILEPATH], OPTIONAL_KWARGS)
 ```
-For instance, you could run:
+For instance, you could run (please see `sample_run.py`):
 ```py
-from app.redact_pii.py import run_redaction
-kwargs = { "output_dir": "./sample_redaction/sample_output", "output_format": "json", "model": "llama3.2" }
-run_redaction(["./sample_redaction/sample_input"], **kwargs)
+from redact_pii import run_redaction
+
+def main():
+    """
+    main entrypoint
+    """
+    kwargs = {"output_dir": "./sample_redaction/sample_output", "output_format": "json", "model": "llama3.2"}
+    run_redaction(["./sample_redaction/sample_input"], **kwargs)
+    kwargs = {"output_dir": "./sample_redaction/sample_output", "output_format": "html", "model": "llama3.2"}
+    run_redaction(["./sample_redaction/sample_input"], **kwargs)
+
+if __name__ == '__main__':
+    main()
+
 ```
 This will result in a JSON file containing the identified PII, source text, redacted text, and any errors to /sample_redaction/sample_output.
 
 # Performance Metrics
 If you are not already logged into the huggingface CLI from your machine, you will need to provide a user token. To do so, copy your user token into a TXT file. Then, copy the contents of `scripts/pii-masking-300k/read_token_template.py` into `scripts/pii-masking-300k/read_token.py` and edit the path in the repository to point to the text file holding your token. 
 
-If you are using Docker, you will need to mount the file containing the token. Place the TXT file containing your user token into the `tokens` folder on this repository (not version controlled). Update the path in `scripts/pii-masking-300k/read_token.py` and re-run the container to mount:
+If you are using Docker, you will need to mount the file containing the token. By default, the recommended docker run commands will mount your current working directory, which may include your token file. If not, you need to mount the folder or the specific file that has the token file `docker run -v path_to_token_dir:/entry/some_dir`. Update the path in `scripts/pii-masking-300k/read_token.py` and re-run the container to mount:
 ```sh
-docker run --gpus=all -v "$(pwd)/sample_redaction:/sample_redaction" -v "$(pwd)/tokens:/tokens" -it --rm --name temp_pii_splicing pii_splicing
+docker run --gpus=all -v "$(pwd):/entry" -it --rm --name temp_pii_splicing pii_splicing
 ```
 
 For more help, please see the official documentation [user tokens](https://huggingface.co/docs/hub/en/security-tokens) or the [huggingface CLI](https://huggingface.co/docs/huggingface_hub/en/guides/cli).
