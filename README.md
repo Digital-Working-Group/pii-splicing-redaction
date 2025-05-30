@@ -4,12 +4,12 @@ This repository contains a tool to redact PII using local large language models 
 
 # Table of Contents
 1. [About Redacting PII](#about-redacting-pii)
-2. [Installation without Docker](#installation)
-3. [Installation with Docker](#installation-1)
-4. [Running this tool - CLI](#command-line-interface-cli)
+2. [Installation without Docker](#without-docker)
+3. [Installation with Docker](#with-docker)
+4. [Running this tool - CLI](#running-this-tool-command-line-interface-cli)
     - [Arguments](#arguments)
     - [Usage Example](#usage-example)
-5. [Running this tool - Programmatic Interface](#programmatic-interface)
+5. [Running this tool - Programmatic Interface](#running-this-tool-programmatic-interface)
     - [Arguments](#arguments-1)
     - [Usage Example](#usage-example-1)
 6. [Performance Metrics](#performance-metrics)
