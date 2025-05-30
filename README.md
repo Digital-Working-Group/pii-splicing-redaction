@@ -131,7 +131,7 @@ The `redact_pii.run_redaction()`  function takes in an input paths list (`input_
 | seed | int | The random number seed to use for generation. | None, Ollama defaults to a random value. |
 | temperature | float | The temperature (creativity) of the model. | None, Ollama defaults to 0.8. |
 
-For more details on optional arguments, please see [Ollama's official documentation](https://ollama.readthedocs.io/en/modelfile/#valid-parameters-and-values). To see if your version of Ollama has any different default options different from the official documentation, you can run:
+For more details on optional arguments, please see [Ollama's official documentation](https://ollama.readthedocs.io/en/modelfile/#valid-parameters-and-values). To see if your model via Ollama has any different default options different from the official documentation, you can run:
 ```sh
 ollama show --parameters YOUR-MODEL
 ```
@@ -167,12 +167,12 @@ This repository provides a sample TXT file, which can be found in `sample_redact
 
 # Performance Metrics
 If you are not already logged into the Huggingface CLI from your machine, you will need to provide a user token. To create and access your user token, follow the steps below:
-    1. Go to [Huggingface's user token page](huggingface.co/settings/tokens)
-    2. Create a new token 
-    3. Select the token type **Read**, name, and create the token
-    4. Copy the token into a text file 
-    5. Copy the contents of `scripts/pii-masking-300k/read_token_template.py` into `scripts/pii-masking-300k/read_token.py`
-    6. Edit the path in the repository to point to the text file holding your token. 
+1. Go to [Huggingface's user token page](huggingface.co/settings/tokens)
+2. Create a new token 
+3. Select the token type **Read**, name, and create the token
+4. Copy the token into a text file 
+5. Copy the contents of `scripts/pii-masking-300k/read_token_template.py` into `scripts/pii-masking-300k/read_token.py`
+6. Edit the path in the repository to point to the text file holding your token. 
 
 If you are using Docker, you will need to mount the file containing the token. By default, the recommended docker run commands will mount your current working directory, which may include your token file. If not, you need to mount the folder or the specific file that has the token file `docker run -v path_to_token_dir:/entry/some_dir`. Update the path in `scripts/pii-masking-300k/read_token.py` and re-run the container to mount:
 ```sh
