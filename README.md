@@ -3,30 +3,20 @@
 This repository contains a tool to redact PII using local large language models from Ollama.
 
 # Table of Contents
-[About Redacting PII](#about-redacting-pii)
-[Installation without Docker](#installation)
-[Installation with Docker](#installation-1)
-[Running this tool - CLI](#command-line-interface-cli)
+1. [About Redacting PII](#about-redacting-pii)
+2. [Installation without Docker](#installation)
+3. [Installation with Docker](#installation-1)
+4. [Running this tool - CLI](#command-line-interface-cli)
     - [Arguments](#arguments)
     - [Usage Example](#usage-example)
-[Running this tool - Programmatic Interface](#programmatic-interface)
+5. [Running this tool - Programmatic Interface](#programmatic-interface)
     - [Arguments](#arguments-1)
     - [Usage Example](#usage-example-1)
-[Performance Metrics](#performance-metrics)
-[Performance Testing](#performance-testing)
-[Models](#models)
-[Acknowledgements](#acknowledgement)
-[Citations](#citations)
-
-6. [Installation with Docker](#installation-1)
-7. [Running with Docker](#arguments-2)
-    - [Arguments](#arguments-2)
-    - [Usage Example](#usage-example-2)
-8. [Performance Metrics with Docker](#performance-metrics-1)
-9. [Models](#models)
-10. [Performance Testing](#performance-testing)
-11. [Acknowledgements](#acknowledgement)
-12. 
+6. [Performance Metrics](#performance-metrics)
+7. [Performance Testing](#performance-testing)
+8. [Models](#models)
+9. [Acknowledgements](#acknowledgement)
+10. [Citations](#citations)
 
 # About Redacting PII
 See `app/main.py` and `app/redact_pii.py` for examples. Both will produce the same output given the same input, but `app/main.py` is written to use arguments passed with flags and `app/redact_pii.py` uses keyword arguments. 
