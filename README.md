@@ -19,7 +19,7 @@ This repository contains a tool to redact PII (personally identifiable informati
 10. [Citations](#citations)
 
 # About Redacting PII
-See `app/main.py` and `app/redact_pii.py` for examples. Both will produce the same output given the same input, but `app/main.py` is written as a command line interface (CLI) and `app/redact_pii.py` uses keyword arguments via a programmatic interface. Please see the [CLI](#running-this-tool-command-line-interface-cli) and [progammatic interface](#running-this-tool-programmatic-interface) instructions respectively.
+See `main.py` and `redact_pii.py` for examples. Both will produce the same output given the same input, but `main.py` is written as a command line interface (CLI) and `redact_pii.py` uses keyword arguments via a programmatic interface. Please see the [CLI](#running-this-tool-command-line-interface-cli) and [progammatic interface](#running-this-tool-programmatic-interface) instructions respectively.
 
 The tool expects the text to be redacted in plain text format.
 Extracted entities and redacted text are outputted in JSON format.
@@ -98,7 +98,7 @@ python main.py pii_splicing [-h] [-o OUTPUT_DIR] [--write_html] [--model MODEL] 
 | --temperature | The temperature (creativity) of the model. | None, Ollama defaults to 0.8. |
 | input_paths | List of paths to input files or directories. If a directory is specified, only files with the `.txt` extension are processed. | None |
 
-See `app/main.py` for CLI script implementation.
+See `main.py` for CLI script implementation.
 
 ## Usage Example
 Assuming that your text files are in a folder called `sample_redaction/sample_input` and the folder `sample_redaction/sample_output` exists to store the redaction output, use the following command to use the llama3.2 model for redaction:
@@ -129,7 +129,7 @@ For more details on optional arguments, please see [Ollama's official documentat
 ```sh
 ollama show --parameters YOUR-MODEL
 ```
-See `app/redact_pii.py` for the script's implementation and to adjust any keyword arguments.
+See `redact_pii.py` for the script's implementation and to adjust any keyword arguments.
 
 ### Usage Example
 Assuming that your text files are in a folder called `sample_redaction/sample_input` and the folder `sample_redaction/sample_output` exists to store the redaction output, use the following command to use the llama3.2 model for redaction:
@@ -172,7 +172,7 @@ mkdir data, out
 cd data
 python ../scripts/pii-masking-300k/export_pii_masking_300k.py
 cd ..
-python app/main.py --model llama3.2 ./data -o ./out
+python main.py --model llama3.2 ./data -o ./out
 python scripts/pii-masking-300k/pii_masking_evaluate.py
 ```
 or
@@ -181,7 +181,7 @@ mkdir data out
 cd data
 python3 ../scripts/pii-masking-300k/export_pii_masking_300k.py
 cd ..
-python3 app/main.py --model llama3.2 ./data -o ./out
+python3 main.py --model llama3.2 ./data -o ./out
 python3 scripts/pii-masking-300k/pii_masking_evaluate.py
 ```
 The default settings will pull 10 files from the `pii-masking-300k` dataset and write them to txt files in the /data folder. To calculate the counts for the summary, the script iterates over the source text one word at a time, comparing each word to the list of predicted entities (PII identified by the LLM) and the list of target entities (the dataset's privacy mask). Each word will be identified as one of the following:
