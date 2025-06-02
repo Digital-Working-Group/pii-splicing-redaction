@@ -115,10 +115,10 @@ For instance, you could run:
 ```sh
 python main.py --model llama3.2 ./sample_redaction/sample_input -o ./sample_redaction/sample_output
 ```
-This will result in a JSON file containing the identified PII, source text, redacted text, and any errors to /sample_redaction/sample_output. 
+This will result in a JSON file containing the identified PII, source text, redacted text, and any errors to /sample_redaction/sample_output. It will also capture the full output from the LLM in a JSON file written to /sample_redaction/sample_output/<MODEL_NAME>.
 
 ### Sample Input and Output Files
-This repository provides a sample TXT file, which can be found in `sample_redaction/sample_input/`. Running the redaction tool on this file produces the sample output JSON, which can be found in `sample_redaction/sample_output`.
+This repository provides a sample TXT file, which can be found in `sample_redaction/sample_input/`. Running the redaction tool on this file produces the sample output JSON and the full LLM output, which can be found respectively in `sample_redaction/sample_output` and `sample_redaction/sample_output/<MODEL_NAME`.
 
 # Running this tool: Programmatic Interface
 ## Arguments
@@ -160,10 +160,10 @@ if __name__ == '__main__':
     main()
 
 ```
-The first run_redaction() call will result in a JSON file and the second will result in an HTML file. Both will contain the identified PII, source text, redacted text, and any errors to /sample_redaction/sample_output.
+The first run_redaction() call will result in a JSON file and the second will result in an HTML file. Both will contain the identified PII, source text, redacted text, and any errors to /sample_redaction/sample_output. Both will also capture the full output from the LLM in a JSON file written to /sample_redaction/sample_output/<MODEL_NAME>.
 
 ### Sample Input and Output Files
-This repository provides a sample TXT file, which can be found in `sample_redaction/sample_input/`. Running the redaction tool on this file produces the sample output JSON, which can be found in `sample_redaction/sample_output`.
+This repository provides a sample TXT file, which can be found in `sample_redaction/sample_input/`. Running the redaction tool on this file produces the sample output JSON and the full LLM output, which can be found respectively in `sample_redaction/sample_output` and `sample_redaction/sample_output/<MODEL_NAME`.
 
 # Performance Metrics
 If you are not already logged into the Huggingface CLI from your machine, you will need to provide a user token. To create and access your user token, follow the steps below:
