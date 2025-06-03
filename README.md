@@ -214,7 +214,7 @@ Result of Phi4 on the first 500 rows of [pii-masking-300k](https://huggingface.c
 - Recall: 84.6%
 - F1: 88.1%
 
-These results can be reproduced by running the [performance metric script](#performance-metrics) by adjusting the `set_size` to 500 in `scripts/pii-masking-300k/export_pii_masking_300k.py`.
+These results can be reproduced by running the [performance metric script](#performance-metrics) by adjusting the `set_size` to 500 in `scripts/pii-masking-300k/export_pii_masking_300k.py`. There were N=31 predicted words that were non-matches (not in the original text).
 
 # Models
 Current supported models and approximate GPU VRAM requirements are:
