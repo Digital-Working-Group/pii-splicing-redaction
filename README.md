@@ -3,7 +3,7 @@
 This repository contains a tool to redact PII (personally identifiable information) using local large language models via Ollama. Please see the [pii-splicing-documentation](https://github.com/Digital-Working-Group/pii-splicing-documentation) repository for further reading materials on PII Splicing.
 
 # Table of Contents
-1. [About Redacting PII](#about-redacting-pii)
+1. [Introduction](#introduction)
 2. [Installation without Docker](#without-docker)
 3. [Installation with Docker](#with-docker)
 4. [Running this tool - CLI](#running-this-tool-command-line-interface-cli)
@@ -189,7 +189,8 @@ docker run --gpus=all -v "$(pwd):/entry" -it --rm --name temp_pii_splicing pii_s
 
 For more help, please see the official documentation [user tokens](https://huggingface.co/docs/hub/en/security-tokens) or the [Hugging Face CLI](https://huggingface.co/docs/huggingface_hub/en/guides/cli).
 
-To evaluate the performance of this model, run the script below starting from the root of the repo:
+To evaluate the performance of this model, run the commands below in the root of the repo (python3 may be needed instead of python, depending on environment setup):
+
 ```sh
 mkdir data out
 cd data
@@ -198,26 +199,18 @@ cd ..
 python main.py --model llama3.2 ./data -o ./out
 python scripts/pii-masking-300k/pii_masking_evaluate.py
 ```
-or
-```bash
-mkdir data out
-cd data
-python3 ../scripts/pii-masking-300k/export_pii_masking_300k.py
-cd ..
-python3 main.py --model llama3.2 ./data -o ./out
-python3 scripts/pii-masking-300k/pii_masking_evaluate.py
-```
-The default settings will pull 10 files from the `pii-masking-300k` dataset and write them to txt files in the /data folder. To calculate the counts for the summary, the script iterates over the source text one word at a time, comparing each word to the list of predicted entities (PII identified by the LLM) and the list of target entities (the dataset's privacy mask). Each word will be identified as one of the following:
+The default settings will pull 10 files from the `pii-masking-300k` dataset and write them to txt files in the data/ folder.
+To calculate the counts for the summary, the script iterates over the source text one word at a time, comparing each word to the list of predicted entities (PII identified by the LLM) and the list of target entities (the dataset's privacy mask). If a word occurs multiple times within the text, each occurrence will be counted in the summary.
+Each word will be identified as one of the following:
   - True positive: found in both the target entries and the predicted entries
   - False positives: not found in the target entries, but found in the predicted entries
   - True negatives: found in neither the target entries nor the predicted entries
   - False negatives: found in the target entries, but not found in the predicted entries
-If a word occurs multiple times within the text, each occurrence will be counted in the summary.
-
 The script will output a JSON file for every TXT file containing the redacted PII, as well as two summaries in the /out/summaries folder. The summary JSON contains a list of the filenames, the starting timestamp, and the counts for each status. The summary XLSX contains columns describing the file, word, and status of that word. 
 
 # Performance Testing
-Result of Phi4 on the first 500 rows of [pii-masking-300k](https://huggingface.co/datasets/ai4privacy/pii-masking-300k), where each word in the input text is considered a separate token and identified tokens not part of the source text are ignored.
+Results of the Phi4 LLM model on the first 500 rows of [pii-masking-300k](https://huggingface.co/datasets/ai4privacy/pii-masking-300k).
+
 - Precision: 91.8%
 - Recall: 84.6%
 - F1: 88.1%
@@ -230,7 +223,7 @@ Current supported models and approximate GPU VRAM requirements are:
 - phi4 (14B parameters), 14 GB
 - llama3.3 (70B parameters), 50 GB
 
-Additional models can be added by modifying the Docker build to pull the new models.
+Additional LLM models can be pulled down via ollama, see the [ollama library here](https://ollama.com/library).
 
 # Acknowledgements
 - [Ollama.](https://github.com/ollama/ollama)
