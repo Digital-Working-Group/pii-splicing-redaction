@@ -16,7 +16,6 @@ def run_redaction(input_paths, **kwargs):
     if seed is not None:
         options['seed'] = int(seed)
     options = kwargs.get("options", {})
-
     output_dir_path = Path(output_dir)
     for input_path in input_paths:
         process_input_path(input_path, output_format, output_dir_path, model, options)

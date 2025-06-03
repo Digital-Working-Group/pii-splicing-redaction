@@ -18,13 +18,21 @@ This repository contains a tool to redact PII (personally identifiable informati
 9. [Acknowledgements](#acknowledgement)
 10. [Citations](#citations)
 
-# About Redacting PII
+# Introduction
 See `main.py` and `redact_pii.py` for examples. Both will produce the same output given the same input, but `main.py` is written as a command line interface (CLI) and `redact_pii.py` uses keyword arguments via a programmatic interface. Please see the [CLI](#running-this-tool-command-line-interface-cli) and [progammatic interface](#running-this-tool-programmatic-interface) instructions respectively.
 
-The tool expects plain text files as input.
-Extracted entities and redacted text are outputted in JSON or HTML format.
-
-Output files are named after the input text file, but with the extension changed from `.txt` to `.json` or `.html`. For example, if the input file was named `story1.txt`, then the output file name would be `story1.json`.
+## Sample Input and Output Files
+The tool expects plain text files as input. Extracted entities and redacted text are outputted in JSON or HTML format, based on the selected output format.
+A sample input file can be found in `sample_redaction/sample_input/`. Sample output files (JSON and HTML) can be found in `sample_redaction/sample_output`
+This repository provides a sample TXT file, which can be found in `sample_redaction/sample_input/`. Running the redaction tool on this file produces the sample output JSON and the full LLM output, which can be found respectively in `sample_redaction/sample_output` and `sample_redaction/sample_output/<MODEL_NAME`.
+```
+sample_redaction
+   |-- sample_input
+   |   |-- test.txt
+   |-- sample_output
+   |   |-- test.html
+   |   |-- test.json
+```
 
 # Installation
 ## Without Docker
@@ -63,7 +71,7 @@ Activate your virtual environment:
 
 or with Windows:
 ```sh
-venv\Scripts\activate
+.venv\Scripts\activate
 ```
 
 Install requirements:

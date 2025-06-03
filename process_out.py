@@ -10,14 +10,15 @@ from redaction import redact_text
 
 def llm_message_out(output_file: TextIO, llm_raw_response: str):
     """Outputs raw llm message contents"""
-    base_dir = Path(output_file.name).parent
-    file_name = f'{Path(output_file.name).stem}.json'
+    as_path = Path(output_file.name)
+    base_dir = as_path.parent
+    ext = as_path.suffix.replace(".", "-")
+    file_name = f'{as_path.stem}{ext}.json'
     response_json = json.loads(llm_raw_response)
-    model = response_json['model']
-    output_dir = base_dir / model
+    output_dir = base_dir / 'llm_raw_response'
     Path(output_dir).mkdir(parents=True, exist_ok=True)
-    with open(Path(output_dir) / file_name, "w", encoding="utf-8") as output_file:
-        json.dump(response_json, output_file, indent=4)
+    with open(Path(output_dir) / file_name, "w", encoding="utf-8") as json_out:
+        json.dump(response_json, json_out, indent=4)
 
 def process_file_json_out(input_file: TextIO, output_file: TextIO, model: str, options: dict):
     """Identify PII, redact, and output redaction to a JSON"""
@@ -53,31 +54,27 @@ def process_file_html_out(input_file: TextIO, output_file: TextIO, model: str, o
         html_output = str(err)
     else:
         html_output = generate_html_report(text, [e.value for e in entities])
+        llm_message_out(output_file, raw_response)
     output_file.write(html_output)
 
-
-def process_path_json_out(input_path: Path, output_dir: Path, model: str, options: dict):
-    """Creates output directory write JSON file."""
+def process_path_out(input_path: Path, output_dir: Path, model: str, options: dict, output_format: str):
+    """Creates output directory write JSON or HTML file."""
+    output_dir = output_dir / model
     Path(output_dir).mkdir(parents=True, exist_ok=True)
-    with open(input_path, encoding='utf-8') as input_file:
-        with open(output_dir / input_path.with_suffix(".json").name, "w", encoding='utf-8') as out_file:
-            process_file_json_out(input_file, out_file, model, options)
-
-def process_path_html_out(input_path: Path, output_dir: Path, model: str, options: dict):
-    """Creates output directory write HTML file."""
-    Path(output_dir).mkdir(parents=True, exist_ok=True)
-    with open(input_path, encoding='utf-8') as input_file:
-        with open(output_dir / input_path.with_suffix(".html").name, "w", encoding='utf-8') as out_file:
+    out_filepath = output_dir / input_path.with_suffix(f'.{output_format}').name
+    with open(input_path, encoding='utf-8') as input_file, open(out_filepath, "w", encoding='utf-8') as out_file:
+        if output_format == 'html':
             process_file_html_out(input_file, out_file, model, options)
+        else:
+            process_file_json_out(input_file, out_file, model, options)
 
 def process_input_path(input_path, output_format, output_dir_path, model, options):
     """
     process an file (input_path) or directory of text files
     """
     input_path = Path(input_path)
-    process_func = process_path_html_out if output_format == "html" else process_path_json_out
     if input_path.is_dir():
         for file in input_path.glob("*.txt"):
-            process_func(file, output_dir_path, model, options)
+            process_path_out(file, output_dir_path, model, options, output_format)
     else:
-        process_func(input_path, output_dir_path, model, options)
+        process_path_out(input_path, output_dir_path, model, options, output_format)
