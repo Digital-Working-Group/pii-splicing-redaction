@@ -1,6 +1,6 @@
-# PII Splicing
+# PII Splicing Redaction
 
-This repository contains a tool to redact PII (personally identifiable information) using local large language models via Ollama.
+This repository contains a tool to redact PII (personally identifiable information) using local large language models via Ollama. Please see the [pii-splicing-documentation](https://github.com/Digital-Working-Group/pii-splicing-documentation) repository for further reading materials on PII Splicing.
 
 # Table of Contents
 1. [About Redacting PII](#about-redacting-pii)
