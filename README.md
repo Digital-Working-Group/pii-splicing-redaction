@@ -22,9 +22,9 @@ This repository contains a tool to redact PII (personally identifiable informati
 See `main.py` and `redact_pii.py` for examples. Both will produce the same output given the same input, but `main.py` is written as a command line interface (CLI) and `redact_pii.py` uses keyword arguments via a programmatic interface. Please see the [CLI](#running-this-tool-command-line-interface-cli) and [progammatic interface](#running-this-tool-programmatic-interface) instructions respectively.
 
 ## Sample Input and Output Files
-The tool expects plain text files as input. Extracted entities and redacted text are outputted in JSON or HTML format, based on the selected output format. Output will be written to a directory named after the LLM model that was selected.
+The tool expects plain text files as input. Extracted entities and redacted text are written in JSON or HTML format, based on the selected output format. Output files will be written to a directory named after the LLM model that was selected.
 
-A sample input file can be found in `sample_redaction/sample_input/`. Sample output files (JSON and HTML) can be found in `sample_redaction/sample_output/llama3.2` from utilizing the llama3.2 model. Sample raw response output files from the LLM model can be found in `sample_redaction/sample_output/llama3.2/llm_raw_response/<output_filename>-<output_file_extension>.json`.
+A sample input file can be found in `sample_redaction/sample_input/`. Sample output files (JSON and HTML) from utilizing the llama3.2 model can be found in `sample_redaction/sample_output/llama3.2`. Sample raw LLM response output files can be found in `sample_redaction/sample_output/llama3.2/llm_raw_response/<output_filename>-<output_file_extension>.json`.
 
 ```
 sample_redaction
@@ -129,7 +129,7 @@ For instance, you could run:
 ```sh
 python main.py --model llama3.2 ./sample_redaction/sample_input -o ./sample_redaction/sample_output
 ```
-See [Sample Input and Output Files](#sample-input-and-output-files) for more information on inputs and outputs.
+See [Sample Input and Output Files](#sample-input-and-output-files) for more information on input and output files.
 
 # Running this tool: Programmatic Interface
 ## Arguments
@@ -171,23 +171,23 @@ if __name__ == '__main__':
     main()
 
 ```
-See [Sample Input and Output Files](#sample-input-and-output-files) for more information on inputs and outputs.
+See [Sample Input and Output Files](#sample-input-and-output-files) for more information on input and output files.
 
 # Performance Metrics
-If you are not already logged into the Huggingface CLI from your machine, you will need to provide a user token. To create and access your user token, follow the steps below:
-1. Go to [Huggingface's user token page](huggingface.co/settings/tokens)
+If you are not already logged into the Hugging Face CLI from your machine, you will need to provide a user token. To create and access your user token, follow the steps below:
+1. Go to [Hugging Face's user token page](https://huggingface.co/settings/tokens)
 2. Create a new token 
-3. Select the token type **Read**, name, and create the token
+3. Select the token type **Read**, enter a token name, and then create the token
 4. Copy the token into a text file 
-5. Copy the contents of `scripts/pii-masking-300k/read_token_template.py` into `scripts/pii-masking-300k/read_token.py`
-6. Edit the path in the repository to point to the text file holding your token. 
+5. Create a new file called `scripts/pii-masking-300k/read_token.py` and copy the contents of `scripts/pii-masking-300k/read_token_template.py` into it
+6. Edit the `token_loc` variable in the `read_token.py` script to point to the text file holding your token
 
 If you are using Docker, you will need to mount the file containing the token. By default, the recommended docker run commands will mount your current working directory, which may include your token file. If not, you need to mount the folder or the specific file that has the token file `docker run -v path_to_token_dir:/entry/some_dir`. Update the path in `scripts/pii-masking-300k/read_token.py` and re-run the container to mount:
 ```sh
 docker run --gpus=all -v "$(pwd):/entry" -it --rm --name temp_pii_splicing pii_splicing
 ```
 
-For more help, please see the official documentation [user tokens](https://huggingface.co/docs/hub/en/security-tokens) or the [huggingface CLI](https://huggingface.co/docs/huggingface_hub/en/guides/cli).
+For more help, please see the official documentation [user tokens](https://huggingface.co/docs/hub/en/security-tokens) or the [Hugging Face CLI](https://huggingface.co/docs/huggingface_hub/en/guides/cli).
 
 To evaluate the performance of this model, run the script below starting from the root of the repo:
 ```sh
@@ -236,7 +236,7 @@ Additional models can be added by modifying the Docker build to pull the new mod
 - [Ollama.](https://github.com/ollama/ollama)
 
 # Citations
-If you use this in your research, please cite the Huggingface dataset:
+If you use this in your research, please cite the Hugging Face dataset:
 ```bibtex
 @misc{ai4privacy_2024,
 	author={ Ai4Privacy },
