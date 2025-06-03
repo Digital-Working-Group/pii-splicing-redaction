@@ -22,16 +22,22 @@ This repository contains a tool to redact PII (personally identifiable informati
 See `main.py` and `redact_pii.py` for examples. Both will produce the same output given the same input, but `main.py` is written as a command line interface (CLI) and `redact_pii.py` uses keyword arguments via a programmatic interface. Please see the [CLI](#running-this-tool-command-line-interface-cli) and [progammatic interface](#running-this-tool-programmatic-interface) instructions respectively.
 
 ## Sample Input and Output Files
-The tool expects plain text files as input. Extracted entities and redacted text are outputted in JSON or HTML format, based on the selected output format.
-A sample input file can be found in `sample_redaction/sample_input/`. Sample output files (JSON and HTML) can be found in `sample_redaction/sample_output`
-This repository provides a sample TXT file, which can be found in `sample_redaction/sample_input/`. Running the redaction tool on this file produces the sample output JSON and the full LLM output, which can be found respectively in `sample_redaction/sample_output` and `sample_redaction/sample_output/<MODEL_NAME`.
+The tool expects plain text files as input. Extracted entities and redacted text are outputted in JSON or HTML format, based on the selected output format. Output will be written to a directory named after the LLM model that was selected.
+
+A sample input file can be found in `sample_redaction/sample_input/`. Sample output files (JSON and HTML) can be found in `sample_redaction/sample_output/llama3.2` from utilizing the llama3.2 model. Sample raw response output files from the LLM model can be found in `sample_redaction/sample_output/llama3.2/llm_raw_response/<output_filename>-<output_file_extension>.json`.
+
 ```
 sample_redaction
    |-- sample_input
    |   |-- test.txt
    |-- sample_output
-   |   |-- test.html
-   |   |-- test.json
+   |   |-- llama3.2
+   |   |   |-- llm_raw_response
+   |   |   |   |-- test-html.json
+   |   |   |   |-- test-json.json
+   |   |   |-- test.html
+   |   |   |-- test.json
+
 ```
 
 # Installation
@@ -123,10 +129,7 @@ For instance, you could run:
 ```sh
 python main.py --model llama3.2 ./sample_redaction/sample_input -o ./sample_redaction/sample_output
 ```
-This will result in a JSON file containing the identified PII, source text, redacted text, and any errors to /sample_redaction/sample_output. It will also capture the full output from the LLM in a JSON file written to /sample_redaction/sample_output/<MODEL_NAME>.
-
-### Sample Input and Output Files
-This repository provides a sample TXT file, which can be found in `sample_redaction/sample_input/`. Running the redaction tool on this file produces the sample output JSON and the full LLM output, which can be found respectively in `sample_redaction/sample_output` and `sample_redaction/sample_output/<MODEL_NAME`.
+See [Sample Input and Output Files](#sample-input-and-output-files) for more information on inputs and outputs.
 
 # Running this tool: Programmatic Interface
 ## Arguments
@@ -168,10 +171,7 @@ if __name__ == '__main__':
     main()
 
 ```
-The first run_redaction() call will result in a JSON file and the second will result in an HTML file. Both will contain the identified PII, source text, redacted text, and any errors to /sample_redaction/sample_output. Both will also capture the full output from the LLM in a JSON file written to /sample_redaction/sample_output/<MODEL_NAME>.
-
-### Sample Input and Output Files
-This repository provides a sample TXT file, which can be found in `sample_redaction/sample_input/`. Running the redaction tool on this file produces the sample output JSON and the full LLM output, which can be found respectively in `sample_redaction/sample_output` and `sample_redaction/sample_output/<MODEL_NAME`.
+See [Sample Input and Output Files](#sample-input-and-output-files) for more information on inputs and outputs.
 
 # Performance Metrics
 If you are not already logged into the Huggingface CLI from your machine, you will need to provide a user token. To create and access your user token, follow the steps below:
