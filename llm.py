@@ -66,7 +66,7 @@ def identify_pii(text: str, model: str, options: "dict[Any, Any]", custom_prompt
     if not response.message or not response.message.content:
         raise ValueError(f"Model {model} did not return any content")
     print(response.message.content)
-    return parse_model_output(response.message.content)
+    return parse_model_output(response.message.content), response.model_dump_json()
 
 def identify_pii_from_file(input_file_path: Path, model: str, options: "dict[Any, Any]", custom_prompt: Optional[str] = None) -> "list[Entity]":
     """Converts file to text for identify_pii."""
