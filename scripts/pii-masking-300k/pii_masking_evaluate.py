@@ -9,20 +9,44 @@ from datetime import datetime
 import pandas as pd
 from export_pii_masking_300k import load_hugging_face_dataset
 
+def calc_summary_metrics(counts_dict):
+    """
+    calculate summary metrics
+    """
+    true_pos = counts_dict['total_true_positives']
+    true_neg = counts_dict['total_true_negatives']
+    false_pos = counts_dict['total_false_positives']
+    false_neg = counts_dict['total_false_negatives']
+
+    precision = true_pos / (true_pos + false_pos)
+    recall = true_pos / (true_pos + false_neg)
+    f1_score = (2 * precision * recall) / (precision + recall)
+
+    precision = round(100 * precision, 1)
+    recall = round(100 * recall, 1)
+    f1_score = round(100 * f1_score, 1)
+    summary = {
+        "True Positives": true_pos,
+        "True Negatives": true_neg,
+        "False Positives": false_pos,
+        "False Negatives": false_neg,
+        "Precision": f'{precision}%',
+        "Recall": f'{recall}%',
+        "F1": f'{f1_score}%'
+    }
+    return summary
+
 def write_summary_json(output_root, counts_dict, file_list, start_time, print_summary=True):
     """Write evaluation summary to a JSON file"""
     print(f'outroot is {output_root}')
-    summary = {
-        "True Positives": counts_dict['total_true_positives'],
-        "True Negatives": counts_dict['total_true_negatives'],
-        "False Positives": counts_dict['total_false_positives'],
-        "False Negatives": counts_dict['total_false_negatives'],
+    summary = calc_summary_metrics(counts_dict)
+    summary.update({
         "Non matches": counts_dict['total_non_matches'],
         "Errors": counts_dict['error_count'],
         "Total files": counts_dict['total_files'],
         "Files": file_list,
         "Ran at": start_time.strftime("%Y-%m-%d %H:%M:%S")
-    }
+    })
 
     if print_summary is True:
         pprint.pprint(summary)
