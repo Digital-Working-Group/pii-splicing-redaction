@@ -20,11 +20,20 @@ def llm_message_out(output_file: TextIO, llm_raw_response: str):
     with open(Path(output_dir) / file_name, "w", encoding="utf-8") as json_out:
         json.dump(response_json, json_out, indent=4)
 
+def get_text_and_response(input_file, model, options):
+    """
+    get the text from the input_file, get response from the llm model
+    """
+    text = input_file.read()
+    response = llm.identify_pii(text, model, options)
+    return text, response
+
 def process_file_json_out(input_file: TextIO, output_file: TextIO, model: str, options: dict):
     """Identify PII, redact, and output redaction to a JSON"""
-    text = input_file.read()
+    text, response = get_text_and_response(input_file, model, options)
+    llm_message_out(output_file, response.model_dump_json())
     try:
-        entities, raw_response = llm.identify_pii(text, model, options)
+        entities = llm.parse_model_output(response.message.content)
     except json.JSONDecodeError as err:
         print(err)
         results = pii_identification.PIIResults(
@@ -40,21 +49,20 @@ def process_file_json_out(input_file: TextIO, output_file: TextIO, model: str, o
             source_text=text,
             redacted_text=redacted_text,
         )
-        llm_message_out(output_file, raw_response)
 
     json.dump(asdict(results), output_file, indent=4)
 
 def process_file_html_out(input_file: TextIO, output_file: TextIO, model: str, options: dict):
     """Identify PII, redact, and output redaction to an HTML"""
-    text = input_file.read()
+    text, response = get_text_and_response(input_file, model, options)
+    llm_message_out(output_file, response.model_dump_json())
     try:
-        entities, raw_response = llm.identify_pii(text, model, options)
+        entities = llm.parse_model_output(response.message.content)
     except json.JSONDecodeError as err:
         print(err)
         html_output = str(err)
     else:
         html_output = generate_html_report(text, [e.value for e in entities])
-        llm_message_out(output_file, raw_response)
     output_file.write(html_output)
 
 def process_path_out(input_path: Path, output_dir: Path, model: str, options: dict, output_format: str):
