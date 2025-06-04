@@ -4,6 +4,7 @@ import json
 import pprint
 import re
 import os
+import sys
 from datetime import datetime
 import pandas as pd
 from export_pii_masking_300k import load_hugging_face_dataset
@@ -127,7 +128,7 @@ def process_pii_json(file, dataset, counts_dict, summary_df):
         counts_dict['error_count'] += 1
         return None
     ds_row = dataset[int(file.name.split(".json")[0])]
-    target_entities = ds_row["privacy_mask"]
+    target_entities = get_target_entities(ds_row["privacy_mask"])
     source_text_lower = ds_row["source_text"].lower()
     predicted_entities = get_predicted_entities(json_data["entities"], source_text_lower,
         counts_dict)
@@ -142,14 +143,15 @@ def process_pii_json(file, dataset, counts_dict, summary_df):
 
 def evaluate():
     """Evaluate PII """
+    model = 'llama3.2'
+    argv = sys.argv
+    if len(argv) > 1:
+        model = argv[1]
     start_time = datetime.now()
     file_list, dataset, counts_dict, summary_df = init_data_structures()
-    for child in Path("out").iterdir():
-        if not child.is_dir():
-            continue
-        for file in child.glob("*.json"):
-            process_pii_json(file, dataset, counts_dict, summary_df)
-            file_list.append(file)
+    for file in Path(f"out/{model}").glob("*.json"):
+        process_pii_json(file, dataset, counts_dict, summary_df)
+        file_list.append(file)
     write_output(file_list, counts_dict, start_time, summary_df)
 
 if __name__ == "__main__":
