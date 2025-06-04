@@ -40,6 +40,15 @@ sample_redaction
 
 ```
 
+### Sample Input File
+Please see the plain text file [test.txt](sample_redaction/sample_input/test.txt) for an example of an input file.
+
+### Sample Output Files
+The [test.json](sample_redaction/sample_output/llama3.2/test.json) file will contain:
+- An `entities` key, which contains a parsed list of dictionaries, where `type` is contains the category of PII that was identified and `value` contains the words that comprise the identified PII.
+- A `source_text` key, which contains the original text from the input file.
+- A `redacted_text` key, which contains the source text from the input file, but with `<PII>` replacing all the identified PII entities (see redact_text() in [redaction.py](redaction.py) and process_file_json_out() in [process_out.py](process_out.py)).
+
 # Installation
 ## Without Docker
 These scripts require at least Python version 3.8 or later. Check your Python version via this command:
