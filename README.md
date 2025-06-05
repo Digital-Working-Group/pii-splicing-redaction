@@ -216,7 +216,16 @@ cd ..
 python main.py --model llama3.2 ./data -o ./out
 python scripts/pii-masking-300k/pii_masking_evaluate.py
 ```
-The default settings will pull 10 files from the `pii-masking-300k` dataset and write them to txt files in the data/ folder (0.txt, 1.txt, ...).
+
+The default settings in [export_pii_masking_300k.py](scripts/pii-masking-300k/export_pii_masking_300k.py) will pull 10 files (see `set_size` in load_hugging_face_dataset()) from the `pii-masking-300k` dataset and write them to txt files in the data/ folder (0.txt, 1.txt, ...).
+
+By default, [pii_masking_evaluate.py](scripts/pii-masking-300k/pii_masking_evaluate.py) will iterate over the contents `out/llama3.2` for JSON files (see `evaluate()`). A different model name can be supplied to pii_masking_evaluate.py to iterate over that directory instead.
+
+```sh
+python scripts/pii-masking-300k/pii_masking_evaluate.py ## targets out/llama3.2
+python scripts/pii-masking-300k/pii_masking_evaluate.py llama3.2 ## targets out/llama3.2
+python scripts/pii-masking-300k/pii_masking_evaluate.py phi4 ## targets out/phi4
+```
 
 To calculate the counts for the summary, the script iterates over the source text one word at a time, comparing each word to the list of predicted entities (PII identified by the LLM) and the list of target entities (the dataset's privacy mask). If a word occurs multiple times within the text, each occurrence will be counted in the summary.
 
