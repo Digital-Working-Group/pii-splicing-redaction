@@ -13,7 +13,7 @@ This repository contains a tool to redact PII (personally identifiable informati
     - [Arguments](#arguments-1)
     - [Usage Example](#usage-example-1)
 6. [Calculate Performance Metrics on pii-masking-300k](#calculate-performance-metrics-on-pii-masking-300k)
-7. [Performance Metrics on pii-masking-300k (first 500)](#performance-metrics-on-pii-masking-300k-(first-500))
+7. [Performance Metrics on pii-masking-300k](#performance-metrics-on-pii-masking-300k))
 8. [Models](#models)
 9. [Acknowledgements](#acknowledgement)
 10. [Citations](#citations)
@@ -261,7 +261,7 @@ The `out/llama3.2/` directory will contain:
     - A timestamped `summary_YYYY_MM_DD_HHMMSS.json` file that contains the performance metrics and other information. (see `write_summary_json()` in [pii_masking_evaluate.py](scripts/pii-masking-300k/pii_masking_evaluate.py))
     - A timestamped `summary_YYYY_MM_DD_HHMMSS.xlsx` file that contains a Summary tab, and then individual tabs for each output JSON file that had no errors. (see `write_summary_xlsx()`in [pii_masking_evaluate.py](scripts/pii-masking-300k/pii_masking_evaluate.py))
 
-# Performance Metrics on pii-masking-300k (first 500)
+# Performance Metrics on pii-masking-300k
 Results of the Phi4 LLM model on the first 500 rows of [pii-masking-300k](https://huggingface.co/datasets/ai4privacy/pii-masking-300k).
 
 - Precision: 91.8%
