@@ -52,7 +52,7 @@ The [test.json](sample_redaction/sample_output/llama3.2/test.json) file contains
 - A `redacted_text` key, which contains the source text from the input file, but with `<PII>` replacing all the identified PII entities (see `redact_text()` in [redaction.py](redaction.py).
 - An `errors` key, which will contain a string of the error message that occurred when trying to parse the model's LLM output. The `entities` list should be empty if errors is not an empty list. If an error occurs, the llm_raw_response file is still created.
 
-The [test.html](sample_redaction/sample_output/llama3.2/test.html) file contains <...>.
+The [test.html](sample_redaction/sample_output/llama3.2/test.html) file contains the text from the input file with the predicted entities in purple.
 
 The [test-html.json](sample_redaction/sample_output/llama3.2/llm_raw_response/test-html.json) and [test-json.json](sample_redaction/sample_output/llama3.2/llm_raw_response/test-json.json) files contain the raw LLM response when running the tool with llama3.2 on test.html and test.json respectively. See `llm_message_out()` in [process_out.py](process_out.py) for further details.
 
