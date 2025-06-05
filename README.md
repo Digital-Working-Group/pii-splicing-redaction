@@ -19,7 +19,7 @@ This repository contains a tool to redact PII (personally identifiable informati
 10. [Citations](#citations)
 
 # Introduction
-See `main.py` and `redact_pii.py` for examples. Both will produce the same output given the same input, but `main.py` is written as a command line interface (CLI) and `redact_pii.py` uses keyword arguments via a programmatic interface. Please see the [CLI](#running-this-tool-command-line-interface-cli) and [progammatic interface](#running-this-tool-programmatic-interface) instructions respectively.
+See [main.py](main.py) and [redact_pii.py](redact_pii.py) for examples. Both will produce the same output given the same input, but [main.py](main.py) is written as a command line interface (CLI) and [redact_pii.py](redact_pii.py) uses keyword arguments via a programmatic interface. Please see the [CLI](#running-this-tool-command-line-interface-cli) and [progammatic interface](#running-this-tool-programmatic-interface) instructions respectively.
 
 ## Sample Input and Output Files
 The tool expects plain text files as input. Extracted entities and redacted text are written in JSON or HTML format, based on the selected output format. Output files will be written to a directory named after the LLM model that was selected.
