@@ -44,10 +44,17 @@ sample_redaction
 Please see the plain text file [test.txt](sample_redaction/sample_input/test.txt) for an example of an input file.
 
 ### Sample Output Files
-The [test.json](sample_redaction/sample_output/llama3.2/test.json) file will contain:
-- An `entities` key, which contains a parsed list of dictionaries, where `type` is contains the category of PII that was identified and `value` contains the words that comprise the identified PII.
+See `process_file_json_out()` and `process_file_html_out()` in [process_out.py](process_out.py) for full details on how the output JSON/HTML files are created.
+
+The [test.json](sample_redaction/sample_output/llama3.2/test.json) file contains:
+- An `entities` key, which contains a parsed list of dictionaries, where `type` contains the category of PII that was identified and `value` contains the words that comprise the identified PII.
 - A `source_text` key, which contains the original text from the input file.
-- A `redacted_text` key, which contains the source text from the input file, but with `<PII>` replacing all the identified PII entities (see redact_text() in [redaction.py](redaction.py) and process_file_json_out() in [process_out.py](process_out.py)).
+- A `redacted_text` key, which contains the source text from the input file, but with `<PII>` replacing all the identified PII entities (see `redact_text()` in [redaction.py](redaction.py).
+- An `errors` key, which will contain a string of the error message that occurred when trying to parse the model's LLM output. The `entities` list should be empty if errors is not an empty list. If an error occurs, the llm_raw_response file is still created.
+
+The [test.html](sample_redaction/sample_output/llama3.2/test.html) file contains <...>.
+
+The [test-html.json](sample_redaction/sample_output/llama3.2/llm_raw_response/test-html.json) and [test-json.json](sample_redaction/sample_output/llama3.2/llm_raw_response/test-json.json) files contain the raw LLM response when running the tool with llama3.2 on test.html and test.json respectively. See `llm_message_out()` in [process_out.py](process_out.py) for further details.
 
 # Installation
 ## Without Docker

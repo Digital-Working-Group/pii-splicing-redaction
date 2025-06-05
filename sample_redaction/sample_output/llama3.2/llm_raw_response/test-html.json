@@ -1,17 +1,17 @@
 {
     "model": "llama3.2",
-    "created_at": "2025-06-03T19:17:14.509765Z",
+    "created_at": "2025-06-05T15:56:51.2351853Z",
     "done": true,
     "done_reason": "stop",
-    "total_duration": 7637794000,
-    "load_duration": 20757600,
+    "total_duration": 14718246000,
+    "load_duration": 21863600,
     "prompt_eval_count": 428,
-    "prompt_eval_duration": 168296100,
-    "eval_count": 46,
-    "eval_duration": 7447663200,
+    "prompt_eval_duration": 119905400,
+    "eval_count": 115,
+    "eval_duration": 14573892300,
     "message": {
         "role": "assistant",
-        "content": "[\n  {\"type\": \"last_name\", \"value\": \"Rivers\"},\n  {\"type\": \"first_name\", \"value\": \"Ethan\"},\n  {\"type\": \"sex\", \"value\": \"male\"}\n]",
+        "content": "[\n  {\"type\": \"last_name\", \"value\": \"Rivers\"},\n  {\"type\": \"sex\", \"value\": \"male\"},\n  {\"type\": \"last_name\", \"value\": \"Rivers\"},\n  {\"type\": \"name\", \"value\": \"Ethan\"},\n  {\"type\": \"last_name\", \"value\": \"Rivers\"},\n  {\"type\": \"sex\", \"value\": \"male\"},\n  {\"type\": \"first_name\", \"value\": \"Sarah\"},\n  {\"type\": \"name\", \"value\": \"Sarah\"}\n]",
         "images": null,
         "tool_calls": null
     }
