@@ -13,9 +13,9 @@ This repository contains a tool to redact PII (personally identifiable informati
     - [Arguments](#arguments-1)
     - [Usage Example](#usage-example-1)
 6. [Calculate Performance Metrics on pii-masking-300k](#calculate-performance-metrics-on-pii-masking-300k)
-7. [Performance Metrics on pii-masking-300k](#performance-metrics-on-pii-masking-300k))
+7. [Performance Metrics on pii-masking-300k](#performance-metrics-on-pii-masking-300k)
 8. [Models](#models)
-9. [Acknowledgements](#acknowledgement)
+9. [Acknowledgements](#acknowledgements)
 10. [Citations](#citations)
 
 # Introduction
