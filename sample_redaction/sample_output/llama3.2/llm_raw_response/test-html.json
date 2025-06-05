@@ -1,17 +1,17 @@
 {
     "model": "llama3.2",
-    "created_at": "2025-06-05T18:09:47.2446995Z",
+    "created_at": "2025-06-05T19:31:49.751868Z",
     "done": true,
     "done_reason": "stop",
-    "total_duration": 19140100500,
-    "load_duration": 31072200,
+    "total_duration": 29255118800,
+    "load_duration": 4424045200,
     "prompt_eval_count": 428,
-    "prompt_eval_duration": 256087000,
-    "eval_count": 70,
-    "eval_duration": 18848645800,
+    "prompt_eval_duration": 9359211600,
+    "eval_count": 113,
+    "eval_duration": 15469279600,
     "message": {
         "role": "assistant",
-        "content": "[\n    {\"type\": \"last_name\", \"value\": \"Rivers\"},\n    {\"type\": \"username\", \"value\": \"\"},\n    {\"type\": \"location\", \"value\": \"Cascade Valley\"},\n    {\"type\": \"last_name\", \"value\": \"\"},\n    {\"type\": \"location\", \"value\": \"Lake Serenity\"}\n]",
+        "content": "[\n    {\"type\": \"last_name\", \"value\": \"Rivers\"},\n    {\"type\": \"username\", \"value\": null},\n    {\"type\": \"email\", \"value\": null},\n    {\"type\": \"sex\", \"value\": \"male\"},\n    {\"type\": \"location\", \"value\": \"Cascade Valley\"},\n    {\"type\": \"last_name\", \"value\": \"Smith\"},\n    {\"type\": \"last_name\", \"value\": \"Rivers\"},\n    {\"type\": \"location\", \"value\": \"Lake Serenity\"}\n]",
         "images": null,
         "tool_calls": null
     }
