@@ -122,19 +122,19 @@ docker run --gpus=all -v "$(pwd):/entry" -it --rm --name temp_pii_splicing pii_s
 # Running this tool: Command Line Interface (CLI)
 ## Arguments
 ```sh
-python main.py pii_splicing [-h] [-o OUTPUT_DIR] [--model MODEL] [--seed SEED] [--temperature TEMPERATURE] input_paths [input_paths ...]
+python main.py input_paths [input_paths ...] [-h] [-o OUTPUT_DIR] [--model MODEL] [--output_format OUTPUT_FORMAT] [--temperature TEMPERATURE] [--seed SEED] 
 ```
 | Flag | Description | Default Value |
 |---|---|---|
+| input_paths | List of paths to input files or directories. If a directory is specified, only files with the `.txt` extension are processed. | None |
 | -h | If included, describes the script's args. | None |
 | -o | Output directory where JSON result files will be written. | "/data/output" |
-| --output_format | Defines the output file type. It must either be JSON or HTML. | JSON |
 | --model | The language model to use. | "llama3.2" |
-| --seed | The random number seed to use for generation. | None, Ollama defaults to a random value. |
+| --output_format | Defines the output file type. It must either be JSON or HTML. | JSON |
 | --temperature | The temperature (creativity) of the model. | None, Ollama defaults to 0.8. |
-| input_paths | List of paths to input files or directories. If a directory is specified, only files with the `.txt` extension are processed. | None |
+| --seed | The random number seed to use for generation. | None, Ollama defaults to a random value. |
 
-See `main.py` for CLI script implementation.
+See [main.py](main.py) for details on the CLI script implementation.
 
 ## Usage Example
 Assuming that your text files are in a folder called `sample_redaction/sample_input` and the folder `sample_redaction/sample_output` exists to store the redaction output, use the following command to use the llama3.2 model for redaction:
