@@ -171,7 +171,7 @@ Assuming that your text files are in a folder called `sample_redaction/sample_in
 from redact_pii import run_redaction
 run_redaction([YOUR_INPUT_FILEPATH], OPTIONAL_KWARGS)
 ```
-For instance, you could run (please see `sample_run.py`):
+For instance, you could run (please see [sample_run.py](sample_run.py)):
 ```py
 from redact_pii import run_redaction
 
@@ -190,7 +190,7 @@ if __name__ == '__main__':
 ```
 See [Sample Input and Output Files](#sample-input-and-output-files) for more information on input and output files.
 
-# Performance Metrics
+# Calculate Performance Metrics on pii-masking-300k
 If you are not already logged into the Hugging Face CLI from your machine, you will need to provide a user token. To create and access your user token, follow the steps below:
 1. Go to [Hugging Face's user token page](https://huggingface.co/settings/tokens)
 2. Create a new token 
@@ -206,7 +206,7 @@ docker run --gpus=all -v "$(pwd):/entry" -it --rm --name temp_pii_splicing pii_s
 
 For more help, please see the official documentation [user tokens](https://huggingface.co/docs/hub/en/security-tokens) or the [Hugging Face CLI](https://huggingface.co/docs/huggingface_hub/en/guides/cli).
 
-To evaluate the performance of this model, run the commands below in the root of the repo (python3 may be needed instead of python, depending on environment setup):
+To evaluate the performance of this model, run the commands below in the root of the repo (python3 may be needed instead of python, depending on the environment):
 
 ```sh
 mkdir data out
@@ -216,16 +216,43 @@ cd ..
 python main.py --model llama3.2 ./data -o ./out
 python scripts/pii-masking-300k/pii_masking_evaluate.py
 ```
-The default settings will pull 10 files from the `pii-masking-300k` dataset and write them to txt files in the data/ folder.
+The default settings will pull 10 files from the `pii-masking-300k` dataset and write them to txt files in the data/ folder (0.txt, 1.txt, ...).
+
 To calculate the counts for the summary, the script iterates over the source text one word at a time, comparing each word to the list of predicted entities (PII identified by the LLM) and the list of target entities (the dataset's privacy mask). If a word occurs multiple times within the text, each occurrence will be counted in the summary.
+
 Each word will be identified as one of the following:
   - True positive: found in both the target entries and the predicted entries
-  - False positives: not found in the target entries, but found in the predicted entries
-  - True negatives: found in neither the target entries nor the predicted entries
-  - False negatives: found in the target entries, but not found in the predicted entries
-The script will output a JSON file for every TXT file containing the redacted PII, as well as two summaries in the /out/summaries folder. The summary JSON contains a list of the filenames, the starting timestamp, and the counts for each status. The summary XLSX contains columns describing the file, word, and status of that word. 
+  - False positive: not found in the target entries, but found in the predicted entries
+  - True negative: found in neither the target entries nor the predicted entries
+  - False negative: found in the target entries, but not found in the predicted entries
+  - Precision: True positives / (True positives + False positives)
+  - Recall: True positives / (True positives + False negatives)
+  - F1: 2 * Precision * Recall / (Precision + Recall)
 
-# Performance Testing
+## Output Files
+```
+out
+   |-- llama3.2
+   |   |-- llm_raw_response
+   |   |   |-- 0-json.json
+   |   |   |-- 1-json.json ## N-json.json for every input file
+   |   |-- summaries
+   |   |   |-- summary_YYYYMMDD_HHMMSS.json
+   |   |   |-- summary_YYYYMMDD_HHMMSS.xlsx
+   |   |-- 0.json
+   |   |-- 1.json ## N.json for every input file
+
+```
+Further information on the structure of the output files can be seen in the [Sample Output Files](#sample-output-files) section.
+
+The `out/llama3.2/` directory will contain:
+- The output JSON files (0.json, 1.json, ...9.json) from the PII redaction (same structure as [test.json](sample_redaction/sample_output/llama3.2/test.json)).
+- A `llm_raw_response/` folder that contains the raw LLM response for each respective input file (same structure as [test-json.json](sample_redaction/sample_output/llama3.2/llm_raw_response/test-json.json)).
+- A `summaries/` folder that contains:
+    - A timestamped `summary_YYYY_MM_DD_HHMMSS.json` file that contains the performance metrics and other information. (see `write_summary_json()` in [pii_masking_evaluate.py](scripts/pii-masking-300k/pii_masking_evaluate.py))
+    - A timestamped `summary_YYYY_MM_DD_HHMMSS.xlsx` file that contains a Summary tab, and then individual tabs for each output JSON file that had no errors. (see `write_summary_xlsx()`in [pii_masking_evaluate.py](scripts/pii-masking-300k/pii_masking_evaluate.py))
+
+# Performance Metrics on pii-masking-300k (first 500)
 Results of the Phi4 LLM model on the first 500 rows of [pii-masking-300k](https://huggingface.co/datasets/ai4privacy/pii-masking-300k).
 
 - Precision: 91.8%
