@@ -16,5 +16,5 @@ def generate_html_report(text: str, predicted_entities: "list[str]"):
             text = text.replace(value, f"[purple]{value}[/purple]")
         # Remove blank lines from highlighted text
         highlighted_text = '\n'.join(line for line in text.split('\n') if line.strip())
-        console.print(highlighted_text)
+        console.print(highlighted_text, highlight=False)
         return console.export_html()
