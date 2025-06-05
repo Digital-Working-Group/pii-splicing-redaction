@@ -155,14 +155,15 @@ The `redact_pii.run_redaction()`  function takes in an input paths list (`input_
 | output_dir | str | Output directory where output files (HTML or JSON) will be written. | "./sample_redaction/sample_output" |
 | output_format | str | Defines the output file type. It must either be JSON or HTML. | JSON |
 | model | str | The language model to use. | llama3.2 |
-| seed | int | The random number seed to use for generation. | None, Ollama defaults to a random value. |
 | temperature | float | The temperature (creativity) of the model. | None, Ollama defaults to 0.8. |
+| seed | int | The random number seed to use for generation. | None, Ollama defaults to a random value. |
 
 For more details on optional arguments, please see [Ollama's official documentation](https://ollama.readthedocs.io/en/modelfile/#valid-parameters-and-values). To see if your model via Ollama has any different default options different from the official documentation, you can run:
+
 ```sh
 ollama show --parameters YOUR-MODEL
 ```
-See `redact_pii.py` for the script's implementation and to adjust any keyword arguments.
+See [redact_pii.py](redact_pii.py) for the script's implementation and to adjust any keyword arguments.
 
 ### Usage Example
 Assuming that your text files are in a folder called `sample_redaction/sample_input` and the folder `sample_redaction/sample_output` exists to store the redaction output, use the following command to use the llama3.2 model for redaction:

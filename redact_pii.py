@@ -8,14 +8,13 @@ def run_redaction(input_paths, **kwargs):
     output_dir = kwargs.get("output_dir", "./sample_redaction/sample_output")
     output_format = kwargs.get("output_format", "json")
     model = kwargs.get("model", "llama3.2")
-    options = {}
+    options = kwargs.get("options", {})
     temperature = kwargs.get("temperature", None)
     seed = kwargs.get("seed", None)
     if temperature is not None:
         options['temperature'] = float(temperature)
     if seed is not None:
         options['seed'] = int(seed)
-    options = kwargs.get("options", {})
     output_dir_path = Path(output_dir)
     for input_path in input_paths:
         process_input_path(input_path, output_format, output_dir_path, model, options)
