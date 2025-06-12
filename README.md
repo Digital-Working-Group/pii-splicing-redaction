@@ -268,7 +268,7 @@ Results of the Phi4 LLM model on the first 500 rows of [pii-masking-300k](https:
 - Recall: 84.6%
 - F1: 88.1%
 
-These results can be reproduced by running the [performance metric script](#performance-metrics) by adjusting the `set_size` to 500 in [export_pii_masking_300k.py](scripts/pii-masking-300k/export_pii_masking_300k.py). Note that these results were generated without setting the seed or the temperature, so results will vary, even though the input data are the same. There were N=31 predicted words that were non-matches (not in the original text).
+These results can be reproduced by running the [performance metric scripts](#calculate-performance-metrics-on-pii-masking-300k) and loading in the appropriate amount of data by adjusting the `set_size` to 500 in [export_pii_masking_300k.py](scripts/pii-masking-300k/export_pii_masking_300k.py). Note that these results were generated without setting the seed or the temperature, so results will vary, even though the input data are the same. There were N=31 predicted words that were non-matches (not in the original text).
 
 # Models
 Current supported models and approximate GPU VRAM requirements are:
