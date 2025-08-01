@@ -118,6 +118,9 @@ If using GPUs with Docker, use the Docker `--gpus` flag before the image name. F
 ```sh
 docker run --gpus=all -v "$(pwd):/entry" -it --rm --name temp_pii_splicing pii_splicing
 ```
+## Jupyter Notebook Examples
+
+Please run [jupyter notebook](https://docs.jupyter.org/en/latest/running.html) and see [Pii_Splicing_Redaction_Example_Usage.ipynb](Pii_Splicing_Redaction_Example_Usage.ipynb) for an interactive set of examples. Also, see the usage example sections below.
 
 # Running this tool: Command Line Interface (CLI)
 ## Arguments
