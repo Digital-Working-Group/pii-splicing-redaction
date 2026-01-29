@@ -21,7 +21,7 @@ Example output:
 ]
 """
 
-def create_prompt(text: str, custom_prompt: Optional[str], prompt_example: Optional[str], one_shot: bool = False):
+def create_prompt(text: str, custom_prompt: Optional[str], prompt_example: Optional[str], one_shot: Optional[bool] = False):
     """Create a formatted prompt to identify PII entities for the given model.
     If a custom prompt is provided, use that instead.
     The prompt should have a {text} format string that will be replaced with the text to redact.
