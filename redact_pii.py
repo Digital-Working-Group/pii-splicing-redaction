@@ -9,14 +9,17 @@ def run_redaction(input_paths, **kwargs):
     output_format = kwargs.get("output_format", "json")
     model = kwargs.get("model", "llama3.2")
     options = kwargs.get("options", {})
-    prompt_options = kwargs.get("prompt_options", {})
-    ## TODO: finish defining prompt options
     temperature = kwargs.get("temperature", None)
     seed = kwargs.get("seed", None)
+    prompt_fp = kwargs.get("prompt_fp", None)
+    options['prompt_type'] = kwargs.get("prompt_type", "default")
+    options['num_runs'] = kwargs.get("num_runs", 1)
     if temperature is not None:
         options['temperature'] = float(temperature)
     if seed is not None:
         options['seed'] = int(seed)
+    if prompt_fp is not None:
+        options['prompt_fp'] = str(prompt_fp)
     output_dir_path = Path(output_dir)
     for input_path in input_paths:
-        process_input_path(input_path, output_format, output_dir_path, model, options, prompt_options)
+        process_input_path(input_path, output_format, output_dir_path, model, options)

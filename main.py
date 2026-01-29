@@ -2,27 +2,25 @@
 import argparse
 from pathlib import Path
 from process_out import process_input_path
+from typing import Optional
 
 def run_redaction(input_paths: "list[str]", output_dir: str, model: str,
-        output_format: str, num_runs: int, temperature: float, seed: int, custom_prompt: str,
-        prompt_example: str, one_shot: bool): 
+        output_format: str, num_runs: int, temperature: float, seed: int, prompt_type: str,
+        prompt_fp: Optional[str] = None): 
     """Pass through arguments to process input files, create redacted output files."""
     options = {}
-    prompt_options = {}
     if temperature is not None:
         options['temperature'] = float(temperature)
     if seed is not None:
         options['seed'] = int(seed)
+    if prompt_fp is not None:
+        options['prompt_fp'] = str(prompt_fp)
+    options['num_runs'] = int(num_runs)
+    options['prompt_type'] = str(prompt_type)
     output_dir_path = Path(output_dir)
-    if custom_prompt is not None:
-        prompt_options['custom_prompt'] = custom_prompt
-    if prompt_example is not None:
-        prompt_options['prompt_example'] = prompt_example
-    if one_shot:
-        prompt_options['one_shot'] = one_shot
+
     for input_path in input_paths:
-        for _ in range(num_runs):
-            process_input_path(input_path, output_format, output_dir_path, model, options, prompt_options)
+        process_input_path(input_path, output_format, output_dir_path, model, options)
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
@@ -33,9 +31,8 @@ if __name__ == "__main__":
     parser.add_argument("--num_runs", type=int, default=1)
     parser.add_argument("--temperature", default=None)
     parser.add_argument("--seed", default=None)
-    parser.add_argument("--custom_prompt", default=None)
-    parser.add_argument('--prompt_example', default=None)
-    parser.add_argument('--one_shot', action='store_true')
+    parser.add_argument("--prompt_type", default='default')
+    parser.add_argument("--prompt_fp", default=None)
     args = parser.parse_args()
     run_redaction(args.input_paths, args.output_dir, args.model, args.output_format, args.num_runs,
-        args.temperature, args.seed, args.custom_prompt, args.prompt_example, args.one_shot)
+        args.temperature, args.seed, args.prompt_type, args.prompt_fp)

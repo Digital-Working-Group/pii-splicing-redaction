@@ -20,17 +20,17 @@ def llm_message_out(output_file: TextIO, llm_raw_response: str):
     with open(Path(output_dir) / file_name, "w", encoding="utf-8") as json_out:
         json.dump(response_json, json_out, indent=4)
 
-def get_text_and_response(input_file, model, options, prompt_options):
+def get_text_and_response(input_file, model, options):
     """
     get the text from the input_file, get response from the llm model
     """
     text = input_file.read()
-    response = llm.identify_pii(text, model, options, prompt_options)
+    response = llm.identify_pii(text, model, options)
     return text, response
 
-def process_file_json_out(input_file: TextIO, output_file: TextIO, model: str, options: dict, prompt_options: dict):
+def process_file_json_out(input_file: TextIO, output_file: TextIO, model: str, options: dict):
     """Identify PII, redact, and output redaction to a JSON"""
-    text, response = get_text_and_response(input_file, model, options, prompt_options)
+    text, response = get_text_and_response(input_file, model, options)
     llm_message_out(output_file, response.model_dump_json())
     try:
         entities = llm.parse_model_output(response.message.content)
@@ -52,9 +52,9 @@ def process_file_json_out(input_file: TextIO, output_file: TextIO, model: str, o
 
     json.dump(asdict(results), output_file, indent=4)
 
-def process_file_html_out(input_file: TextIO, output_file: TextIO, model: str, options: dict, prompt_options: dict):
+def process_file_html_out(input_file: TextIO, output_file: TextIO, model: str, options: dict):
     """Identify PII, redact, and output redaction to an HTML"""
-    text, response = get_text_and_response(input_file, model, options, prompt_options)
+    text, response = get_text_and_response(input_file, model, options)
     llm_message_out(output_file, response.model_dump_json())
     try:
         entities = llm.parse_model_output(response.message.content)
@@ -65,24 +65,40 @@ def process_file_html_out(input_file: TextIO, output_file: TextIO, model: str, o
         html_output = generate_html_report(text, [e.value for e in entities])
     output_file.write(html_output)
 
-def process_path_out(input_path: Path, output_dir: Path, model: str, options: dict, output_format: str, prompt_options: dict):
+def process_path_out(input_path: Path, output_dir: Path, model: str, options: dict, output_format: str, iteration: int):
     """Creates output directory write JSON or HTML file."""
     output_dir = output_dir / model
-    Path(output_dir).mkdir(parents=True, exist_ok=True)
     out_filepath = output_dir / input_path.with_suffix(f'.{output_format}').name
+    if options.get('num_runs') > 1:
+        output_dir = output_dir / ''
+        out_filepath = output_dir / input_path.with_suffix(f'_{iteration}.{output_format}').name
+    Path(output_dir).mkdir(parents=True, exist_ok=True)
+    
     with open(input_path, encoding='utf-8') as input_file, open(out_filepath, "w", encoding='utf-8') as out_file:
         if output_format == 'html':
-            process_file_html_out(input_file, out_file, model, options, prompt_options)
+            process_file_html_out(input_file, out_file, model, options)
         else:
-            process_file_json_out(input_file, out_file, model, options, prompt_options)
+            process_file_json_out(input_file, out_file, model, options)
+    return out_filepath
 
-def process_input_path(input_path, output_format, output_dir_path, model, options, prompt_options):
+def aggregate_runs():
+    """Aggregate the results from individual runs"""
+
+def process_input_path(input_path, output_format, output_dir_path, model, options):
     """
     process an file (input_path) or directory of text files
     """
     input_path = Path(input_path)
-    if input_path.is_dir():
-        for file in input_path.glob("*.txt"):
-            process_path_out(file, output_dir_path, model, options, output_format, prompt_options)
-    else:
-        process_path_out(input_path, output_dir_path, model, options, output_format, prompt_options)
+    num_runs = options.get('num_runs', 1)
+    threshold = options.get('aggregation', )
+    files_created = []
+    for i in range(num_runs):
+        if input_path.is_dir():
+            for file in input_path.glob("*.txt"):
+                files_created.append(process_path_out(file, output_dir_path, model, options, output_format, i))
+        else:
+            files_created.append(process_path_out(input_path, output_dir_path, model, options, output_format, i))
+    if num_runs > 1:
+        aggregate_runs(files_created, threshold)
+        ## TODO: call a funcion to do the aggreate work here
+        pass

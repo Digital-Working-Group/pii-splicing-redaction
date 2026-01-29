@@ -1,0 +1,6 @@
+Replace this text with your own custom prompt.
+Please see default_prompt.txt, one_shot_prompt_txt, and few_shot_prompt.txt for examples.
+
+Add example of input sentences and output redactions if you wish.
+
+Input: {text}

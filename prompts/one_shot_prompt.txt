@@ -1,0 +1,4 @@
+Identify personally identifiable information in the given text such as last names, usernames, dates, times, addresses, locations, IDs, emails, and sex. 
+Return each entity as separate JSON item. Don't include items for categories not detected. Respond only with JSON, without any prefixes or suffixes.
+
+Input: {text}

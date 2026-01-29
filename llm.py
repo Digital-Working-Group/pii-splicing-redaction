@@ -6,33 +6,24 @@ from typing import Any, Optional
 import ollama
 from pii_identification import Entity
 
-DEFAULT_PROMPT = """
-Identify personally identifiable information in the given text such as last names, usernames, dates, times, addresses, locations, IDs, emails, and sex. Return each entity as separate JSON item. Don't include items for categories not detected. Respond only with JSON, without any prefixes or suffixes.
-Input: {text}
-"""
-
-DEFAULT_EXAMPLE = """
-Example input: My friends Blake Covac and John Smith used to live at Tatte at Back Bay.
-Example output:
-[
-    {{"type": "last_name", "value": "Covac"}},
-    {{"type": "last_name", "value": "Smith"}},
-    {{"type": "location", "value": "Tatte at Back Bay"}}
-]
-"""
-
-def create_prompt(text: str, custom_prompt: Optional[str], prompt_example: Optional[str], one_shot: Optional[bool] = False):
+def create_prompt(text: str, prompt_type: str, prompt_fp: Optional[str] = None):
     """Create a formatted prompt to identify PII entities for the given model.
     If a custom prompt is provided, use that instead.
     The prompt should have a {text} format string that will be replaced with the text to redact.
     """
-    prompt = DEFAULT_PROMPT 
-    if not one_shot:
-        prompt = prompt + '\n' + DEFAULT_EXAMPLE
-    if custom_prompt:
-        prompt = custom_prompt
-    if prompt_example:
-        prompt = prompt + '\n' + prompt_example
+    filepath == 'prompts/default_prompt.txt'
+    if prompt_type == 'one_shot':
+        filepath = 'prompts/one_shot_prompt.txt'
+    elif prompt_type == 'few_shot':
+        filepath = 'prompts/few_shot_prompt.txt'
+    elif prompt_type == 'custom':
+        if prompt_fp is None:
+            raise FileNotFoundError('No filepath is specified for the custom prompt. Please provide a value for prompt_fp.')
+        filepath = prompt_fp
+
+    with open(filepath, 'r', encoding='utf-8') as f:
+        prompt = f.read()
+
     return prompt.format(text=text)
 
 MARKDOWN_EXTRACT_PATTERN = re.compile(r".*?```(?:json)?\s*(.+)```.*$", flags=re.MULTILINE | re.DOTALL)
@@ -58,7 +49,7 @@ def parse_model_output(output: str) -> "list[Entity]":
         result.append(Entity(**entity))
     return result
 
-def identify_pii(text: str, model: str, options: "dict[Any, Any]", create_prompt_kwargs: dict[Any, Any]) -> "list[Entity]":
+def identify_pii(text: str, model: str, options: "dict[Any, Any]") -> "list[Entity]":
     """Prompt and pass options to Ollama model and parse output."""
     response = ollama.chat(model=model, messages=[
         {
@@ -67,7 +58,7 @@ def identify_pii(text: str, model: str, options: "dict[Any, Any]", create_prompt
         },
         {
             "role": "user",
-            "content": create_prompt(text, **create_prompt_kwargs),
+            "content": create_prompt(text, options.get('prompt_type'), options.get('prompt_fp')),
         },
     ], options=options)
 
@@ -75,6 +66,6 @@ def identify_pii(text: str, model: str, options: "dict[Any, Any]", create_prompt
         raise ValueError(f"Model {model} did not return any content")
     return response
 
-def identify_pii_from_file(input_file_path: Path, model: str, options: "dict[Any, Any]", custom_prompt: Optional[str] = None) -> "list[Entity]":
+def identify_pii_from_file(input_file_path: Path, model: str, options: "dict[Any, Any]") -> "list[Entity]":
     """Converts file to text for identify_pii."""
-    return identify_pii(input_file_path.read_text(), model, options, custom_prompt)
+    return identify_pii(input_file_path.read_text(), model, options)

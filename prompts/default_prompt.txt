@@ -1,0 +1,12 @@
+Identify personally identifiable information in the given text such as last names, usernames, dates, times, addresses, locations, IDs, emails, and sex. 
+Return each entity as separate JSON item. Don't include items for categories not detected. Respond only with JSON, without any prefixes or suffixes.
+
+Example input: My friends Blake Covac and John Smith used to live around the corner from Tatte in Back Bay.
+Example output:
+[
+    {{"type": "last_name", "value": "Covac"}},
+    {{"type": "last_name", "value": "Smith"}},
+    {{"type": "location", "value": "Tatte in Back Bay"}}
+]
+
+Input: {text}
