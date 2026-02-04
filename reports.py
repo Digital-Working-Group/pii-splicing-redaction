@@ -1,6 +1,8 @@
 """reports.py"""
 import os
 from rich.console import Console
+from redaction import redact_text
+import pii_identification
 
 def generate_html_report(text: str, predicted_entities: "list[str]"):
     """Format HTML output summary"""
@@ -18,3 +20,11 @@ def generate_html_report(text: str, predicted_entities: "list[str]"):
         highlighted_text = '\n'.join(line for line in text.split('\n') if line.strip())
         console.print(highlighted_text, highlight=False)
         return console.export_html()
+
+def generate_json_report(text: str, entities: list):
+    redacted_text = redact_text(text, [entity.value for entity in entities])
+    return pii_identification.PIIResults(
+        entities=entities,
+        source_text=text,
+        redacted_text=redacted_text,
+    )
