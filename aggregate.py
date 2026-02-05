@@ -4,12 +4,6 @@ from bs4 import BeautifulSoup as bsoup
 from collections import defaultdict, Counter
 import json
 
-def update_counts(texts, pii_counts_dict):
-    """Update the number of runs in which a result is flagged"""
-    for item in set(texts):
-        all_pii[item] += 1
-    return all_pii
-
 def collect_html(files):
     """ Collect the results from individual runs outputted as HTML files"""
     all_pii_list = []
