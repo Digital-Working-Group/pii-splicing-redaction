@@ -29,6 +29,20 @@ def get_text_and_response(input_file, model, options):
     response = llm.identify_pii(text, model, options)
     return text, response
 
+def get_entities(response: dict):
+    """
+    Parse the LLM output for entities to redact
+    Returns entities and the error message (if error), else None
+    """
+    ## TODO: pull out the try except for entities to here and return entities
+    try:
+        entities = llm.parse_model_output(response.message.content)
+        return entities, None
+    except json.JSONDecodeError as err:
+        print(err)
+        entities = []
+        return entities, err
+
 def process_file_json_out(text: str, response: dict, output_file: TextIO):
     """Identify PII, redact, and output redaction to a JSON"""
     # text, response = get_text_and_response(input_file, model, options)
@@ -66,27 +80,30 @@ def process_path_out(input_path: Path, output_dir: Path, model: str, options: di
     files_created = []
     aggregation = options.get("aggregation", "restrictive")
     threshold = options.get("threshold", 0)
+    file_stem = f'{input_path.stem}'
+    output_dir = output_dir / model / file_stem
     for i in range(options.get('num_runs')):
         if options.get('num_runs') == 1:
-            output_dir = output_dir / model
-            out_filepath = output_dir / input_path.with_suffix(f'.{output_format}').name
+            out_filepath = output_dir / f'{file_stem}.{output_format}'
         else:
-            output_dir = output_dir / ''
-            out_filepath = output_dir / input_path.with_suffix(f'_{i}.{output_format}').name
+            out_filepath = output_dir / f'{file_stem}_{i}.{output_format}'
         Path(output_dir).mkdir(parents=True, exist_ok=True)
+        ## TODO: remove
+        print(f'output dir is: {output_dir}')
 
         with open(input_path, encoding='utf-8') as input_file, open(out_filepath, "w", encoding='utf-8') as out_file:
             text, response = get_text_and_response(input_file, model, options)
             llm_message_out(out_file, response.model_dump_json())
+            entities, error = get_entities(response)
             if output_format == 'html':
-                process_file_html_out(input_file, out_file, model, options)
+                ## TODO: edit these to match
+                process_file_html_out(text, entities, error, out_file)
             else:
-                process_file_json_out(input_file, out_file, model, options)
-        files_created.append(out_file)
+                process_file_json_out(text, entities, error, out_file)
+        files_created.append(out_filepath)
     if options.get('num_runs') > 1:
-        redact_items = aggregate_runs(output_format, output_format, files_created, aggregation, threshold)
-        agg_out_filepath = output_dir / input_path.with_suffix(f'_{aggregation}.{output_format}').name
-        Path(agg_out_filepath).mkdir(parents=True, exist_ok=True)
+        redact_items = aggregate_runs(output_format, files_created, aggregation, threshold)
+        agg_out_filepath = output_dir / f'{file_stem}_{aggregation}.{output_format}'
         with open(agg_out_filepath, "w", encoding='utf-8') as out_file:
             process_aggregate_result(output_format, text, redact_items, out_file)
 
@@ -96,7 +113,7 @@ def process_aggregate_result(output_format, text, redact_items, out_file):
         html_output = generate_html_report(text, [item for item in redact_items])
         out_file.write(html_output)
     else:
-        json_output = generate_json_report(text, [item for item in redact_items])
+        json_output = generate_json_report(text, redact_items)
         json.dump(asdict(json_output), out_file, indent=4)
 
 def process_input_path(input_path, output_format, output_dir_path, model, options):

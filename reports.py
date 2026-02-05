@@ -21,8 +21,13 @@ def generate_html_report(text: str, predicted_entities: "list[str]"):
         console.print(highlighted_text, highlight=False)
         return console.export_html()
 
-def generate_json_report(text: str, entities: list):
-    redacted_text = redact_text(text, [entity.value for entity in entities])
+def generate_json_report(text: str, entities: list, redact_list=None):
+    """Format JSON Summary
+    If a redaction list exists, edit the entities to only contain items
+    from the redact list"""
+    if redact_list:
+        entities = [e.value for e in entities if e.value in redact_list]
+    redacted_text = redact_text(text, [e.value for e in entities])
     return pii_identification.PIIResults(
         entities=entities,
         source_text=text,
