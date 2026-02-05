@@ -11,7 +11,7 @@ from aggregate import aggregate_runs
 
 def llm_message_out(output_file: TextIO, llm_raw_response: str):
     """Outputs raw llm message contents"""
-    as_path = Path(output_file.name)
+    as_path = Path(output_file.name) 
     base_dir = as_path.parent
     ext = as_path.suffix.replace(".", "-")
     file_name = f'{as_path.stem}{ext}.json'
@@ -43,34 +43,24 @@ def get_entities(response: dict):
         entities = []
         return entities, err
 
-def process_file_json_out(text: str, response: dict, output_file: TextIO):
-    """Identify PII, redact, and output redaction to a JSON"""
-    # text, response = get_text_and_response(input_file, model, options)
-    # llm_message_out(output_file, response.model_dump_json())
-    try:
-        entities = llm.parse_model_output(response.message.content)
-    except json.JSONDecodeError as err:
-        print(err)
+def process_file_json_out(text: str, entities: list, error_msg: str, output_file: TextIO):
+    """Output redaction to a JSON"""
+    if error_msg:
         results = pii_identification.PIIResults(
             entities=[],
             source_text=text,
             redacted_text=text,
-            errors=[str(err)],
+            errors=[str(error_msg)],
         )
     else:
         results = generate_json_report(text, entities)
 
     json.dump(asdict(results), output_file, indent=4)
 
-def process_file_html_out(text: str, response: dict, output_file: TextIO):
-    """Identify PII, redact, and output redaction to an HTML"""
-    # text, response = get_text_and_response(input_file, model, options)
-    # llm_message_out(output_file, response.model_dump_json())
-    try:
-        entities = llm.parse_model_output(response.message.content)
-    except json.JSONDecodeError as err:
-        print(err)
-        html_output = str(err)
+def process_file_html_out(text: str, entities: list, error_msg: str, output_file: TextIO):
+    """Output redaction to an HTML"""
+    if error_msg:
+        html_output = str(error_msg)
     else:
         html_output = generate_html_report(text, [e.value for e in entities])
     output_file.write(html_output)
@@ -82,6 +72,7 @@ def process_path_out(input_path: Path, output_dir: Path, model: str, options: di
     threshold = options.get("threshold", 0)
     file_stem = f'{input_path.stem}'
     output_dir = output_dir / model / file_stem
+    total_entities = []
     for i in range(options.get('num_runs')):
         if options.get('num_runs') == 1:
             out_filepath = output_dir / f'{file_stem}.{output_format}'
@@ -95,8 +86,9 @@ def process_path_out(input_path: Path, output_dir: Path, model: str, options: di
             text, response = get_text_and_response(input_file, model, options)
             llm_message_out(out_file, response.model_dump_json())
             entities, error = get_entities(response)
+            total_entities.append(entities)
+            ##TODO: Should this logic just be within one process_file?
             if output_format == 'html':
-                ## TODO: edit these to match
                 process_file_html_out(text, entities, error, out_file)
             else:
                 process_file_json_out(text, entities, error, out_file)

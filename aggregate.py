@@ -2,6 +2,8 @@
 ## TODO: consider moving all of the aggregation functions to a separate file
 from bs4 import BeautifulSoup as bsoup 
 from collections import defaultdict, Counter
+from llm import parse_model_output
+from process_out import get_entities
 import json
 
 def collect_html(files):
@@ -18,7 +20,7 @@ def collect_html(files):
         all_pii_list.extend(pii_items)
     return all_pii_list
 
-
+## Not in use currently
 def collect_json(files):
     """ Collect the results from individual runs outputted as JSON files"""
     all_pii_list = []
@@ -33,11 +35,19 @@ def collect_json(files):
 ## TODO: Not currently using this one, but could switch to it
 def collect_raw_json(files):
     """ Collect the results from individual runs outputted as JSON files"""
-    all_pii = []
+    pii_words = []
+    pii_labels_dict = {}
     for file in files:
         with open(file, "r", encoding="utf-8") as f:
             data = json.load(f)
-    pass
+        try:
+            ## This gets only one of each instance per entity
+            pii_words.extend(set(item["value"] for item in data['entities']))
+            ## The get what each item 
+            pii_labels_dict.update({item.value: item.type for item in data['entities']})
+        except json.JSONDecodeError as err:
+            print(err)
+    return pii_words, pii_labels_dict
 
 def filter_pii(threshold, total_runs, counts_dict):
     """Calculates the percentage of runs that count a word as PII and compares to the redaction threshold"""
