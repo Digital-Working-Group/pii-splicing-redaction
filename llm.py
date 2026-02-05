@@ -11,7 +11,7 @@ def create_prompt(text: str, prompt_type: str, prompt_fp: Optional[str] = None):
     If a custom prompt is provided, use that instead.
     The prompt should have a {text} format string that will be replaced with the text to redact.
     """
-    filepath == 'prompts/default_prompt.txt'
+    filepath = 'prompts/default_prompt.txt'
     if prompt_type == 'one_shot':
         filepath = 'prompts/one_shot_prompt.txt'
     elif prompt_type == 'few_shot':

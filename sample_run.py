@@ -8,10 +8,12 @@ def main():
     """
     main entrypoint
     """
-    kwargs = {"output_dir": "./sample_redaction/sample_output", "output_format": "json", "model": "llama3.2"}
+    options = {"num_runs": 4, }
+    kwargs = {"output_dir": "./sample_redaction/sample_output", "output_format": "json", "model": "llama3.2",
+              "num_runs": 4, "aggregation": "majority"}
     run_redaction(["./sample_redaction/sample_input"], **kwargs)
     kwargs = {"output_dir": "./sample_redaction/sample_output", "output_format": "html", "model": "llama3.2",
-              "one_shot": True}
+              "num_runs": 4, "aggregation": "majority"}
     run_redaction(["./sample_redaction/sample_input"], **kwargs)
 
 if __name__ == '__main__':

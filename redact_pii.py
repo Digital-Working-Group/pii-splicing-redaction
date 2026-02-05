@@ -10,10 +10,13 @@ def run_redaction(input_paths, **kwargs):
     model = kwargs.get("model", "llama3.2")
     options = kwargs.get("options", {})
     temperature = kwargs.get("temperature", None)
+    threshold = kwargs.get("threshold", )
     seed = kwargs.get("seed", None)
     prompt_fp = kwargs.get("prompt_fp", None)
     options['prompt_type'] = kwargs.get("prompt_type", "default")
     options['num_runs'] = kwargs.get("num_runs", 1)
+    if threshold is not None:
+        options['threshold'] = str(threshold)
     if temperature is not None:
         options['temperature'] = float(temperature)
     if seed is not None:
