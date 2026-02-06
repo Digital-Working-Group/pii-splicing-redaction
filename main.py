@@ -35,7 +35,7 @@ if __name__ == "__main__":
     parser.add_argument("--seed", default=None)
     parser.add_argument("--prompt_type", default='default')
     parser.add_argument("--prompt_fp", default=None)
-    parser.add_argument("--aggregation", choices=[], default=None)
+    parser.add_argument("--aggregation", choices=['restrictive', 'threshold', 'majority', 'lenient'], default=None)
     parser.add_argument("--threshold", default=None)
     args = parser.parse_args()
     input_paths = args.input_paths

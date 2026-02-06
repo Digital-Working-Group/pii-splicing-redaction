@@ -1,4 +1,5 @@
 """pii_masking_evaluate.py"""
+import argparse
 from pathlib import Path
 import json
 import pprint
@@ -165,18 +166,27 @@ def process_pii_json(file, dataset, counts_dict, summary_df):
         summary_df.loc[len(summary_df)] = [str(file.name), word, status]
     return None
 
-def evaluate():
+def evaluate(model, aggregation):
     """Evaluate PII """
-    model = 'llama3.2'
     argv = sys.argv
     if len(argv) > 1:
         model = argv[1]
     start_time = datetime.now()
     file_list, dataset, counts_dict, summary_df = init_data_structures()
-    for file in Path(f"out/{model}").glob("*.json"):
+    paths = Path(f"out/{model}").glob("*.json")
+    if aggregation:
+        paths = Path(f"out/{model}").glob(f"*{aggregation}.json")
+    for file in paths:
+        ## TODO: remove
+        print(f'processing file: {file}')
         process_pii_json(file, dataset, counts_dict, summary_df)
         file_list.append(file)
     write_output(file_list, counts_dict, start_time, summary_df)
 
 if __name__ == "__main__":
-    evaluate()
+    parser = argparse.ArgumentParser()
+    parser.add_argument("--model", default="llama3.2")
+    parser.add_argument("--aggregation", choices=['restrictive', 'threshold', 'majority', 'lenient'], default=None)
+
+    args = parser.parse_args()
+    evaluate(args.model, args.aggregation)
