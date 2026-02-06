@@ -43,5 +43,4 @@ if __name__ == "__main__":
     config_kwargs = vars(args)
     config_kwargs.pop("input_paths")
 
-    config = RedactionConfig(**config_kwargs)
-    run_redaction(input_paths, **config)
+    run_redaction(input_paths, **config_kwargs)
