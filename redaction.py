@@ -1,7 +1,10 @@
 """redaction.py"""
+from process_out import process_input_path
+from redaction_config import RedactionConfig
 
-def redact_text(text: str, entities: "list[str]") -> str:
-    """Redact text based on entities identified"""
-    for entity in entities:
-        text = text.replace(entity, "<PII>")
-    return text
+def run_redaction(input_paths, **kwargs):
+    """Pass through arguments to process input files, create redacted output files."""
+    config = RedactionConfig(**kwargs)
+
+    for input_path in input_paths:
+        process_input_path(input_path, config)

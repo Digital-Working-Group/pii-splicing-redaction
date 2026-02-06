@@ -1,28 +1,7 @@
 """redact_pii.py"""
 
-from pathlib import Path
-from process_out import process_input_path
-
-def run_redaction(input_paths, **kwargs):
-    """Pass through arguments to process input files, create redacted output files."""
-    output_dir = kwargs.get("output_dir", "./sample_redaction/sample_output")
-    output_format = kwargs.get("output_format", "json")
-    model = kwargs.get("model", "llama3.2")
-    options = kwargs.get("options", {})
-    temperature = kwargs.get("temperature", None)
-    threshold = kwargs.get("threshold", )
-    seed = kwargs.get("seed", None)
-    prompt_fp = kwargs.get("prompt_fp", None)
-    options['prompt_type'] = kwargs.get("prompt_type", "default")
-    options['num_runs'] = kwargs.get("num_runs", 1)
-    if threshold is not None:
-        options['threshold'] = str(threshold)
-    if temperature is not None:
-        options['temperature'] = float(temperature)
-    if seed is not None:
-        options['seed'] = int(seed)
-    if prompt_fp is not None:
-        options['prompt_fp'] = str(prompt_fp)
-    output_dir_path = Path(output_dir)
-    for input_path in input_paths:
-        process_input_path(input_path, output_format, output_dir_path, model, options)
+def redact_text(text: str, entities: "list[str]") -> str:
+    """Redact text based on entities identified"""
+    for entity in entities:
+        text = text.replace(entity, "<PII>")
+    return text
