@@ -1,16 +1,14 @@
-
-## TODO: consider moving all of the aggregation functions to a separate file
+"""
+aggreate.py
+functions to perform aggregation on multiple runs
+"""
 from bs4 import BeautifulSoup as bsoup 
-from collections import defaultdict, Counter
-from llm import parse_model_output
-from process_out import get_entities
+from collections import Counter
 import json
 
 def collect_html(files):
     """ Collect the results from individual runs outputted as HTML files"""
     all_pii_list = []
-    ## build list of PII
-    ## only add one of each entry per file
     for file in files:
         with open(file, "r", encoding="utf-8") as f:
             content = f.read()
@@ -20,7 +18,6 @@ def collect_html(files):
         all_pii_list.extend(pii_items)
     return all_pii_list
 
-## Not in use currently
 def collect_json(files):
     """ Collect the results from individual runs outputted as JSON files"""
     all_pii_list = []
@@ -29,10 +26,9 @@ def collect_json(files):
             data = json.load(f)
         pii_items = set(item["value"] for item in data['entities'])
         all_pii_list.extend(pii_items)
-    print(all_pii_list)
     return all_pii_list
 
-## TODO: Not currently using this one, but could switch to it
+## Not currently using this one, but could switch to it
 def collect_raw_json(files):
     """ Collect the results from individual runs outputted as JSON files"""
     pii_words = []
@@ -54,7 +50,7 @@ def filter_pii(threshold, total_runs, counts_dict):
     redact_list = []
     for pii_text, count in counts_dict.items():
         if count/total_runs >= threshold:
-            print('greater than threshold! {pii_text} should be redacted.')
+            print(f'greater than threshold!\nThreshold: {threshold} Value: {count/total_runs}\n{pii_text} should be redacted.')
             redact_list.append(pii_text)
     return redact_list
 
