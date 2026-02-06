@@ -46,7 +46,11 @@ def parse_model_output(output: str) -> "list[Entity]":
             or not entity["value"]
         ):
             continue
-        result.append(Entity(**entity))
+        print(entity)
+        try:
+            result.append(Entity(**entity))
+        except TypeError as e:
+            print(f'TypeError: {e}')
     return result
 
 def identify_pii(text: str, model: str, options: "dict[Any, Any]") -> "list[Entity]":
