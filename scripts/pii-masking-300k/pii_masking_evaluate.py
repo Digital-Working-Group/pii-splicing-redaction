@@ -135,8 +135,6 @@ def init_data_structures():
 
 def write_output(file_list, counts_dict, start_time, summary_df):
     """write output files"""
-    print(file_list)
-    input()
     output_root = file_list[0].parent / 'summaries'
     output_root.mkdir(parents=True, exist_ok=True)
     filename_list = [f.name for f in file_list]
@@ -154,7 +152,7 @@ def process_pii_json(file, dataset, counts_dict, summary_df):
     if json_data['errors'] != []:
         counts_dict['error_count'] += 1
         return None
-    ds_row = dataset[int(file.name.split(".json")[0])]
+    ds_row = dataset[int(file.name.replace(".json", "").split("_")[0])]
     target_entities = get_target_entities(ds_row["privacy_mask"])
     source_text_lower = ds_row["source_text"].lower()
     predicted_entities = get_predicted_entities(json_data["entities"], source_text_lower,
@@ -170,19 +168,12 @@ def process_pii_json(file, dataset, counts_dict, summary_df):
 
 def evaluate(model, aggregation):
     """Evaluate PII """
-    argv = sys.argv
-    if len(argv) > 1:
-        model = argv[1]
     start_time = datetime.now()
     file_list, dataset, counts_dict, summary_df = init_data_structures()
-    paths = Path(f"out/{model}").glob("*.json")
+    paths = Path(f"out/{model}").glob("**/*.json")
     if aggregation:
-        paths = Path(f"out/{model}").glob(f"*{aggregation}.json")
-    print(paths)
-    input()
+        paths = Path(f"out/{model}").rglob(f"**/*{aggregation}.json")
     for file in paths:
-        ## TODO: remove
-        print(f'processing file: {file}')
         process_pii_json(file, dataset, counts_dict, summary_df)
         file_list.append(file)
     write_output(file_list, counts_dict, start_time, summary_df)
