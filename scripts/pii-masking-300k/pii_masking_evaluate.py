@@ -135,6 +135,8 @@ def init_data_structures():
 
 def write_output(file_list, counts_dict, start_time, summary_df):
     """write output files"""
+    print(file_list)
+    input()
     output_root = file_list[0].parent / 'summaries'
     output_root.mkdir(parents=True, exist_ok=True)
     filename_list = [f.name for f in file_list]
@@ -176,6 +178,8 @@ def evaluate(model, aggregation):
     paths = Path(f"out/{model}").glob("*.json")
     if aggregation:
         paths = Path(f"out/{model}").glob(f"*{aggregation}.json")
+    print(paths)
+    input()
     for file in paths:
         ## TODO: remove
         print(f'processing file: {file}')
