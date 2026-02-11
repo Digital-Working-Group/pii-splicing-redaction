@@ -6,7 +6,7 @@ from typing import TextIO
 from reports import generate_html_report, generate_json_report
 import llm
 import pii_identification
-from aggregate import aggregate_runs
+from aggregate import aggregate_runs, process_aggregate_result
 
 def llm_message_out(output_file: TextIO, llm_raw_response: str):
     """Outputs raw llm message contents"""
@@ -95,17 +95,7 @@ def process_path_out(input_path: Path, output_dir: Path, model: str, options: di
     if options.get('num_runs') > 1:
         redact_items = aggregate_runs(output_format, files_created, aggregation, threshold)
         agg_out_filepath = output_dir / f'{file_stem}_{aggregation}.{output_format}'
-        with open(agg_out_filepath, "w", encoding='utf-8') as out_file:
-            process_aggregate_result(output_format, text, redact_items, total_entities, out_file)
-
-def process_aggregate_result(output_format, text, redact_items, total_entities, out_file):
-    """Process and write aggregate result"""
-    if output_format == "html":
-        html_output = generate_html_report(text, [item for item in redact_items])
-        out_file.write(html_output)
-    else:
-        json_output = generate_json_report(text, total_entities, redact_items)
-        json.dump(asdict(json_output), out_file, indent=4)
+        process_aggregate_result(agg_out_filepath, output_format, text, redact_items, total_entities)
 
 def process_input_path(input_path, redaction_config):
     """

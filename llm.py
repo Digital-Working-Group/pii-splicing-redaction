@@ -37,17 +37,16 @@ def parse_model_output(output: str) -> "list[Entity]":
 
     result: "list[Entity]" = []
     for entity in json.loads(output):
-        if (
-            "type" not in entity
-            or not isinstance(entity["type"], str)
-            or not entity["type"]
-            or "value" not in entity
-            or not isinstance(entity["value"], str)
-            or not entity["value"]
-        ):
-            continue
-        print(entity)
         try:
+            if (
+                "type" not in entity
+                or not isinstance(entity["type"], str)
+                or not entity["type"]
+                or "value" not in entity
+                or not isinstance(entity["value"], str)
+                or not entity["value"]
+            ):
+                continue
             result.append(Entity(**entity))
         except TypeError as e:
             print(f'TypeError: {e}')

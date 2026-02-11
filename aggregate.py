@@ -3,47 +3,46 @@ aggreate.py
 functions to perform aggregation on multiple runs
 """
 from bs4 import BeautifulSoup as bsoup 
+from pathlib import Path
 from collections import Counter
+from dataclasses import asdict
+from reports import generate_html_report, generate_json_report
+from process_in import get_data_from_result, process_previously_generated, collect_html, collect_json
 import json
+import os
+import re
 
-def collect_html(files):
-    """ Collect the results from individual runs outputted as HTML files"""
-    all_pii_list = []
-    for file in files:
-        with open(file, "r", encoding="utf-8") as f:
-            content = f.read()
-        soup = bsoup(content, 'html.parser')
-        spans = soup.find_all('span', class_='r1')
-        pii_items = set([s.get_text(strip=True) for s in spans])
-        all_pii_list.extend(pii_items)
-    return all_pii_list
+def run_aggregation(output_format, output_dir, aggregation, threshold):
+    """
+    aggregate on data that has already been created
+    """
+    output_dir = Path(output_dir)
+    for subdir in output_dir.iterdir():
+        if subdir.is_dir():
+            files = process_previously_generated(subdir)
+            ## TODO: remove
+            print(f'Files found {files}')
+            if len(files) > 1:
+                file_stem = files[0].stem.split("_")[0]
+                agg_out_filepath = output_dir / f'{file_stem}_{aggregation}.{output_format}'
+                text, total_entities = get_data_from_result(output_format, files)
+                redact_items = aggregate_runs(output_format, files, aggregation, threshold)
+                process_aggregate_result(agg_out_filepath, output_format, text, redact_items, total_entities)
+            else:
+                print(f'Not enough files to perform aggregation. Found {len(files)} and need at least 2.')
+        else:
+            print(f'Skipping {subdir}, not a directory.')
 
-def collect_json(files):
-    """ Collect the results from individual runs outputted as JSON files"""
-    all_pii_list = []
-    for file in files:
-        with open(file, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        pii_items = set(item["value"] for item in data['entities'])
-        all_pii_list.extend(pii_items)
-    return all_pii_list
-
-## Not currently using this one, but could switch to it
-def collect_raw_json(files):
-    """ Collect the results from individual runs outputted as JSON files"""
-    pii_words = []
-    pii_labels_dict = {}
-    for file in files:
-        with open(file, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        try:
-            ## This gets only one of each instance per entity
-            pii_words.extend(set(item["value"] for item in data['entities']))
-            ## The get what each item 
-            pii_labels_dict.update({item.value: item.type for item in data['entities']})
-        except json.JSONDecodeError as err:
-            print(err)
-    return pii_words, pii_labels_dict
+def process_aggregate_result(output_filepath, output_format, text, redact_items, total_entities):
+    """Process and write aggregate result"""
+    with open(output_filepath, "w", encoding='utf-8') as out_file:
+        if output_format == "html":
+            html_output = generate_html_report(text, [item for item in redact_items])
+            out_file.write(html_output)
+        else:
+            print(total_entities)
+            json_output = generate_json_report(text, total_entities, redact_items)
+            json.dump(asdict(json_output), out_file, indent=4)
 
 def filter_pii(threshold, total_runs, counts_dict):
     """Calculates the percentage of runs that count a word as PII and compares to the redaction threshold"""
@@ -65,8 +64,10 @@ def aggregate_runs(output_format, files, aggregation, threshold=0):
     }
     if output_format == 'html':
         pii_list = collect_html(files)
-    else:
+    elif output_format == 'json':
         pii_list = collect_json(files)
+    else:
+        raise ValueError(f'Unsupported output format entered {output_format}.')
     pii_counts = Counter(pii_list)
     agg_threshold = aggregation_thresholds.get(aggregation, 0)
     return filter_pii(agg_threshold, len(files), pii_counts)
