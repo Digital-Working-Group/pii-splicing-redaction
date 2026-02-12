@@ -170,7 +170,7 @@ def evaluate(model, aggregation, out_dir):
     """Evaluate PII """
     start_time = datetime.now()
     file_list, dataset, counts_dict, summary_df = init_data_structures()
-    paths = Path(f"{out_dir}t/{model}").glob("**/*.json")
+    paths = Path(f"{out_dir}/{model}").glob("**/*.json")
     if aggregation:
         paths = Path(f"{out_dir}/{model}").rglob(f"**/*{aggregation}.json")
     for file in paths:
