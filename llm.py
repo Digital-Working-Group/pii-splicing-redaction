@@ -4,7 +4,7 @@ import re
 from pathlib import Path
 from typing import Any, Optional
 import ollama
-from pii_identification import Entity
+from config.pii_identification import Entity
 
 def create_prompt(text: str, prompt_type: str, prompt_fp: Optional[str] = None):
     """Create a formatted prompt to identify PII entities for the given model.

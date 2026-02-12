@@ -8,7 +8,7 @@ from pathlib import Path
 from collections import Counter
 from dataclasses import asdict
 from reports import generate_html_report, generate_json_report
-from process_in import get_data_from_result, process_previously_generated, collect_html, collect_json
+from process.process_in import get_data_from_result, process_previously_generated, collect_html, collect_json
 import json
 import os
 import re
@@ -47,7 +47,6 @@ def filter_pii(threshold, total_runs, counts_dict):
     redact_list = []
     for pii_text, count in counts_dict.items():
         if count/total_runs >= threshold:
-            print(f'greater than threshold!\nThreshold: {threshold} Value: {count/total_runs}\n{pii_text} should be redacted.')
             redact_list.append(pii_text)
     return redact_list
 
