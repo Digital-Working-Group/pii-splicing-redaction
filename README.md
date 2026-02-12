@@ -22,7 +22,7 @@ This repository contains a tool to redact PII (personally identifiable informati
 See [main.py](main.py) and [redact_pii.py](redact_pii.py) for examples. Both will produce the same output given the same input, but [main.py](main.py) is written as a command line interface (CLI) and [redact_pii.py](redact_pii.py) uses keyword arguments via a programmatic interface. Please see the [CLI](#running-this-tool-command-line-interface-cli) and [progammatic interface](#running-this-tool-programmatic-interface) instructions respectively.
 
 ## Sample Input and Output Files
-The tool expects plain text files as input. Extracted entities and redacted text are written in JSON or HTML format, based on the selected output format. Output files will be written to a directory named after the LLM model that was selected.
+The tool expects plain text files as input. Optionally, the tool accepts a custom prompt to instruct the LLM, otherwise using the pre-written prompts. Extracted entities and redacted text are written in JSON or HTML format, based on the selected output format. Output files will be written to a directory named after the LLM model that was selected.
 
 A sample input file can be found in `sample_redaction/sample_input/`. Sample output files (JSON and HTML) from utilizing the llama3.2 model can be found in `sample_redaction/sample_output/llama3.2`. Sample raw LLM response output files can be found in `sample_redaction/sample_output/llama3.2/llm_raw_response/<output_filename>-<output_file_extension>.json`.
 
@@ -42,6 +42,9 @@ sample_redaction
 
 ### Sample Input File
 Please see the plain text file [test.txt](sample_redaction/sample_input/test.txt) for a sample input file.
+
+### Sample Prompt
+Please see the [prompts](prompts/) for the provided prompt options or [sample_custom_prompt.txt](prompts/sample_custom_prompt.txt) for a template to create a custom prompt.
 
 ### Sample Output Files
 See `process_file_json_out()` and `process_file_html_out()` in [process_out.py](process_out.py) for full details on how the output JSON/HTML files are created.
@@ -136,6 +139,11 @@ python main.py input_paths [input_paths ...] [-h] [-o OUTPUT_DIR] [--model MODEL
 | --output_format | Defines the output file type. It must either be JSON or HTML. | JSON |
 | --temperature | The temperature (creativity) of the model. | None, Ollama defaults to 0.8. |
 | --seed | The random number seed to use for generation. | None, Ollama defaults to a random value. |
+| --num_runs | The number of times to run the redaction on each file. | 1 |
+| --prompt_type | Prompt to be passed to the LLM. (Options:: "default", "few_shot", "one_shot", "custom") | "default" |
+| --prompt_fp | If prompt_type is "custom", provide the path the the TXT file. | None |
+| --aggregation | If num_runs > 1, the aggregation method used to summaries the runs for each file. (Options: "restrictive", "threshold", "majority", "lenient") | "restrictive" |
+| --threshold | If aggregation type is "threshold", the threshold desired (i.e. 0.35, 0.75) | 0.5 |
 
 See [main.py](main.py) for details on the CLI script implementation.
 
@@ -160,6 +168,11 @@ The `redact_pii.run_redaction()`  function takes in an input paths list (`input_
 | model | str | The language model to use. | llama3.2 |
 | temperature | float | The temperature (creativity) of the model. | None, Ollama defaults to 0.8. |
 | seed | int | The random number seed to use for generation. | None, Ollama defaults to a random value. |
+| num_runs | int | The number of times to run the redaction on each file. | 1 |
+| prompt_type | str | Prompt to be passed to the LLM. (Options:: "default", "few_shot", "one_shot", "custom") | "default" |
+| prompt_fp | str | If prompt_type is "custom", provide the path the the TXT file. | None |
+| aggregation | str | If num_runs > 1, the aggregation method used to summaries the runs for each file. (Options: "restrictive", "threshold", "majority", "lenient") | "restrictive" |
+| threshold | float | If aggregation type is "threshold", the threshold desired (i.e. 0.35, 0.75) | 0.5 |
 
 For more details on optional arguments, please see [Ollama's official documentation](https://ollama.readthedocs.io/en/modelfile/#valid-parameters-and-values). To see if your model via Ollama has any different default options different from the official documentation, you can run:
 
@@ -192,6 +205,15 @@ if __name__ == '__main__':
 
 ```
 See [Sample Input and Output Files](#sample-input-and-output-files) for more information on input and output files.
+
+# Multiple Runs
+This tool supports the option to run N times on the same text and aggregate the results with a specified threshold. The threshold options include:
+| Name | Threshold value |
+|--|--|
+| restrictive | 0 |
+| majority | 0.5 |
+| lenient | 1 |
+| threshold | user provided threshold |
 
 # Calculate Performance Metrics on pii-masking-300k
 If you are not already logged into the Hugging Face CLI from your machine, you will need to provide a user token. To create and access your user token, follow the steps below:
@@ -270,6 +292,21 @@ Results of the Phi4 LLM model on the first 500 rows of [pii-masking-300k](https:
 - Precision: 91.8%
 - Recall: 84.6%
 - F1: 88.1%
+
+For restrictive on 5 runs:
+- Precision: 84.3%
+- Recall: 90.9%
+- F1: 87.5%
+
+For majority on 5 runs:
+- Precision: 91.0%
+- Recall: 70.2%
+- F1: 79.3%
+
+For lenient on 5 runs:
+- Precision: 86.1%
+- Recall: 54.0%
+- F1: 66.4%
 
 These results can be reproduced by running the [performance metric scripts](#calculate-performance-metrics-on-pii-masking-300k) and loading in the appropriate amount of data by adjusting the `set_size` to 500 in [export_pii_masking_300k.py](scripts/pii-masking-300k/export_pii_masking_300k.py). Note that these results were generated without setting the seed or the temperature, so results will vary, even though the input data are the same. There were N=31 predicted words that were non-matches (not in the original text).
 

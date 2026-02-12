@@ -20,9 +20,7 @@ def run_aggregation(output_format, output_dir, aggregation, threshold):
     output_dir = Path(output_dir)
     for subdir in output_dir.iterdir():
         if subdir.is_dir():
-            files = process_previously_generated(subdir)
-            ## TODO: remove
-            print(f'Files found {files}')
+            files = process_previously_generated(subdir, output_format)
             if len(files) > 1:
                 file_stem = files[0].stem.split("_")[0]
                 agg_out_filepath = output_dir / f'{file_stem}_{aggregation}.{output_format}'
@@ -41,7 +39,6 @@ def process_aggregate_result(output_filepath, output_format, text, redact_items,
             html_output = generate_html_report(text, [item for item in redact_items])
             out_file.write(html_output)
         else:
-            print(total_entities)
             json_output = generate_json_report(text, total_entities, redact_items)
             json.dump(asdict(json_output), out_file, indent=4)
 

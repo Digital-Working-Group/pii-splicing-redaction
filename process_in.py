@@ -5,25 +5,29 @@ import json
 from pii_identification import Entity
 from bs4 import BeautifulSoup as bsoup
 
-def process_previously_generated(input_dir):
+def process_previously_generated(input_dir, output_format):
     """Collect multiple previous runs on the same file"""
     files = []
     for item in input_dir.iterdir():
-        if item.is_file() and re.match('.*\d+\.json$', item.name):
-            files.append(item)
+        if item.is_file():
+            if output_format == "json" and re.match('.*\d+\.json$', item.name) \
+            or output_format == "html" and re.match('.*\d+\.html$', item.name):
+                files.append(item)
     return files
 
 def get_html_text(file):
     """ Collect the original text from an html file"""
-    entities = []
+    print(f"openning file {file}")
     with open(file, "r", encoding="utf-8") as f:
         content = f.read()
     soup = bsoup(content, 'html.parser')
-    body = soup.body
+    print(soup)
+    text = soup.body.get_text()
     ## removing span tags
     text = text.replace('<span class="r1">', '')
     text = text.replace('</span>', '')
-    return body
+    print(text)
+    return text
 
 def get_json_text(file):
     with open(file, "r", encoding="utf-8") as f:
