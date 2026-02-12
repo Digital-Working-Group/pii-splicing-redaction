@@ -2,6 +2,7 @@
 aggreate.py
 functions to perform aggregation on multiple runs
 """
+import argparse
 from bs4 import BeautifulSoup as bsoup 
 from pathlib import Path
 from collections import Counter
@@ -72,12 +73,12 @@ def aggregate_runs(output_format, files, aggregation, threshold=0):
     agg_threshold = aggregation_thresholds.get(aggregation, 0)
     return filter_pii(agg_threshold, len(files), pii_counts)
 
-def test_html(filepath):
-    collect_html([filepath])
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-o", "--output_dir", default="out/llama3.2")
+    parser.add_argument("--output_format", choices=["json", "html"], default="json")
+    parser.add_argument("--aggregation", choices=['restrictive', 'threshold', 'majority', 'lenient'], default="restrictive")
+    parser.add_argument("--threshold", default=None)
+    args = parser.parse_args()
 
-def test_json(filepath):
-    collect_json([filepath])
-
-if __name__ == '__main__':
-    # test_html('sample_redaction/sample_output/llama3.2/test.html')
-    test_json('sample_redaction/sample_output/llama3.2/test.json')
+    run_aggregation(args.output_format, args.output_dir, args.aggregation, args.threshold)
