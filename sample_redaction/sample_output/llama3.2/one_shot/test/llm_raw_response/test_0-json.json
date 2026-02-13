@@ -1,0 +1,18 @@
+{
+    "model": "llama3.2",
+    "created_at": "2026-02-13T16:22:51.4909816Z",
+    "done": true,
+    "done_reason": "stop",
+    "total_duration": 24232976900,
+    "load_duration": 19449800,
+    "prompt_eval_count": 397,
+    "prompt_eval_duration": 7229231600,
+    "eval_count": 127,
+    "eval_duration": 16982846000,
+    "message": {
+        "role": "assistant",
+        "content": "[\n    {\"type\": \"last name\", \"value\": \"Rivers\"},\n    {\"type\": \"username\", \"value\": \"None\"},\n    {\"type\": \"dates\", \"value\": \"None\"},\n    {\"type\": \"times\", \"value\": \"None\"},\n    {\"type\": \"addresses\", \"value\": \"None\"},\n    {\"type\": \"locations\", \"value\": \"Cascade Valley, Lake Serenity\"},\n    {\"type\": \"IDs\", \"value\": \"None\"},\n    {\"type\": \"emails\", \"value\": \"None\"},\n    {\"type\": \"sex\", \"value\": \"male\"}\n]",
+        "images": null,
+        "tool_calls": null
+    }
+}
