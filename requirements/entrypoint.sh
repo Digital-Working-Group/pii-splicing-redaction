@@ -3,8 +3,11 @@
 # Start Ollama server in background
 ollama serve & 2>&1 > /dev/null &
 
-# Wait for server to be up (you could improve this)
+# Wait for server to be up
 sleep 5
+
+# Change to mounted directory
+cd /entry || exit 1
 
 # If no args, open interactive shell
 if [ "$#" -eq 0 ]; then
