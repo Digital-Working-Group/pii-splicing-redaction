@@ -3,8 +3,13 @@
 # Start Ollama server in background
 ollama serve & 2>&1 > /dev/null &
 
-# Wait for server to be up
-sleep 5
+# Wait until ready
+until ollama list > /dev/null 2>&1; do
+  sleep 1
+done
+
+# Pull model if not already present
+ollama pull llama3.2
 
 # Change to mounted directory
 cd /entry || exit 1
