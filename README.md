@@ -74,7 +74,7 @@ See `process_file_json_out()` and `process_file_html_out()` in [process_out.py](
 The [test.json](sample_redaction/sample_output/llama3.2/test.json) file contains:
 - An `entities` key, which contains a parsed list of dictionaries, where `type` contains the category of PII that was identified and `value` contains the words that comprise the identified PII.
 - A `source_text` key, which contains the original text from the input file.
-- A `redacted_text` key, which contains the source text from the input file, but with `<PII>` replacing all the identified PII entities (see `redact_text()` in [redaction.py](redaction.py).
+- A `redacted_text` key, which contains the source text from the input file, but with `<PII>` replacing all the identified PII entities (see `redact_text()` in [redaction.py](redaction.py)).
 - An `errors` key, which will contain a string of the error message that occurred when trying to parse the model's LLM output. The `entities` list should be empty if errors is not an empty list. If an error occurs, the llm_raw_response file is still created.
 
 The [test.html](sample_redaction/sample_output/llama3.2/test.html) file contains the text from the input file with the predicted entities in purple.
@@ -129,19 +129,24 @@ pip install -r requirements.txt
 ## With Docker
 [Docker](https://docs.docker.com/engine/install/) is required for building and running the docker container. Docker version 24.0.6, build ed223bc was used to develop and test these scripts.
 
+Enter the requirements directory:
+```sh
+cd requirements
+```
+
 Run the necessary docker build command:
 ```sh
 docker build . -t pii_splicing
 ```
 Run a docker container (named temp_pii_splicing):
 ```sh
-docker run -v "$(pwd):/entry" -it --rm --name temp_pii_splicing pii_splicing
+docker run -v "$(dirname "$(pwd)"):/entry" -it --rm --name temp_pii_splicing pii_splicing
 ```
 
 ### GPU
 If using GPUs with Docker, use the Docker `--gpus` flag before the image name. For example,
 ```sh
-docker run --gpus=all -v "$(pwd):/entry" -it --rm --name temp_pii_splicing pii_splicing
+docker run --gpus=all -v "$(dirname "$(pwd)"):/entry" -it --rm --name temp_pii_splicing pii_splicing
 ```
 ## Jupyter Notebook Examples
 
@@ -150,7 +155,7 @@ Please run [jupyter notebook](https://docs.jupyter.org/en/latest/running.html) a
 # Running this tool: Command Line Interface (CLI)
 ## Arguments
 ```sh
-python main.py input_paths [input_paths ...] [-h] [-o OUTPUT_DIR] [--model MODEL] [--output_format OUTPUT_FORMAT] [--temperature TEMPERATURE] [--seed SEED] 
+python main.py input_paths [input_paths ...] [-h] [-o OUTPUT_DIR] [--model MODEL] [--output_format OUTPUT_FORMAT] [--temperature TEMPERATURE] [--seed SEED] [--num_runs NUM_RUNS] [--prompt]
 ```
 | Flag | Description | Default Value |
 |---|---|---|
@@ -248,7 +253,7 @@ If you are not already logged into the Hugging Face CLI from your machine, you w
 
 If you are using Docker, you will need to mount the file containing the token. By default, the recommended docker run commands will mount your current working directory, which may include your token file. If not, you need to mount the folder or the specific file that has the token file `docker run -v path_to_token_dir:/entry/some_dir`. Update the path in `scripts/pii-masking-300k/read_token.py` and re-run the container to mount:
 ```sh
-docker run --gpus=all -v "$(pwd):/entry" -it --rm --name temp_pii_splicing pii_splicing
+docker run --gpus=all -v "$(dirname "$(pwd)"):/entry" -it --rm --name temp_pii_splicing pii_splicing
 ```
 
 For more help, please see the official documentation [user tokens](https://huggingface.co/docs/hub/en/security-tokens) or the [Hugging Face CLI](https://huggingface.co/docs/huggingface_hub/en/guides/cli).
