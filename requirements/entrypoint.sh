@@ -9,7 +9,11 @@ until ollama list > /dev/null 2>&1; do
 done
 
 # Pull model if not already present
-ollama pull llama3.2
+# Pull model only if missing
+if ! ollama list | grep -q "llama3.2"; then
+  echo "Pulling llama3.2..."
+  ollama pull llama3.2
+fi
 
 # Change to mounted directory
 cd /entry || exit 1
