@@ -149,7 +149,7 @@ def process_pii_json(file, dataset, counts_dict, summary_df):
     with open(file, encoding='utf-8') as in_file:
         json_data = json.load(in_file)
     counts_dict['total_files'] += 1
-    if json_data['errors'] != []:
+    if json_data.get('errors') != []:
         counts_dict['error_count'] += 1
         return None
     ds_row = dataset[int(file.name.replace(".json", "").split("_")[0])]
@@ -173,6 +173,8 @@ def evaluate(model, aggregation, out_dir):
     paths = Path(f"{out_dir}/{model}").glob("**/*.json")
     if aggregation:
         paths = Path(f"{out_dir}/{model}").rglob(f"**/*{aggregation}.json")
+    else:
+        paths = [path for path in paths if not re.match('.*\d+\.json$', path.name)]
     for file in paths:
         process_pii_json(file, dataset, counts_dict, summary_df)
         file_list.append(file)

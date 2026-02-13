@@ -1,6 +1,6 @@
 """main.py"""
 import argparse
-from redaction import run_redaction
+from process.redaction import run_redaction
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()

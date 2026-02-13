@@ -3,10 +3,10 @@ import json
 from pathlib import Path
 from dataclasses import asdict
 from typing import TextIO
-from reports import generate_html_report, generate_json_report
-import llm
-import pii_identification
-from aggregate import aggregate_runs, process_aggregate_result
+from process.reports import generate_html_report, generate_json_report
+import process.llm as llm
+import config.pii_identification as pii_identification
+from process.aggregate import aggregate_runs, process_aggregate_result
 
 def llm_message_out(output_file: TextIO, llm_raw_response: str):
     """Outputs raw llm message contents"""
@@ -68,8 +68,9 @@ def process_path_out(input_path: Path, output_dir: Path, model: str, options: di
     files_created = []
     aggregation = options.get("aggregation", "restrictive")
     threshold = options.get("threshold", 0)
+    prompt = options.get("prompt_type", "default")
     file_stem = f'{input_path.stem}'
-    output_dir = output_dir / model / file_stem
+    output_dir = output_dir / model / prompt / file_stem
     total_entities = []
     for i in range(options.get('num_runs')):
         ## Create output directory

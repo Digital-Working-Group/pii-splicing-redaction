@@ -1,6 +1,6 @@
 """redaction.py"""
-from process_out import process_input_path
-from redaction_config import RedactionConfig
+from process.process_out import process_input_path
+from config.redaction_config import RedactionConfig
 
 def run_redaction(input_paths, **kwargs):
     """Pass through arguments to process input files, create redacted output files."""

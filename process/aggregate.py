@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup as bsoup
 from pathlib import Path
 from collections import Counter
 from dataclasses import asdict
-from reports import generate_html_report, generate_json_report
+from process.reports import generate_html_report, generate_json_report
 from process.process_in import get_data_from_result, process_previously_generated, collect_html, collect_json
 import json
 import os
@@ -23,7 +23,7 @@ def run_aggregation(output_format, output_dir, aggregation, threshold):
             files = process_previously_generated(subdir, output_format)
             if len(files) > 1:
                 file_stem = files[0].stem.split("_")[0]
-                agg_out_filepath = output_dir / f'{file_stem}_{aggregation}.{output_format}'
+                agg_out_filepath = output_dir / subdir.name / f'{file_stem}_{aggregation}.{output_format}'
                 text, total_entities = get_data_from_result(output_format, files)
                 redact_items = aggregate_runs(output_format, files, aggregation, threshold)
                 process_aggregate_result(agg_out_filepath, output_format, text, redact_items, total_entities)
