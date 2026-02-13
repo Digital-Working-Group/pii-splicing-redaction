@@ -31,12 +31,34 @@ sample_redaction
    |-- sample_input
    |   |-- test.txt
    |-- sample_output
-   |   |-- llama3.2
-   |   |   |-- llm_raw_response
-   |   |   |   |-- test-html.json
-   |   |   |   |-- test-json.json
-   |   |   |-- test.html
-   |   |   |-- test.json
+   |   |-- default
+   |   |   |-- llama3.2
+   |   |   |   |-- llm_raw_response
+   |   |   |   |   |-- test_0-html.json
+   |   |   |   |   |-- test_0-json.json
+   |   |   |   |   |-- test_1-html.json
+   |   |   |   |   |-- test_1-json.json
+   |   |   |   |   |-- test_2-html.json
+   |   |   |   |   |-- test_2-json.json
+   |   |   |   |   |-- test_3-html.json
+   |   |   |   |   |-- test_3-json.json
+   |   |   |   |-- test_0.html
+   |   |   |   |-- test_0.json
+   |   |   |   |-- test_1.html
+   |   |   |   |-- test_1.json
+   |   |   |   |-- test_2.html
+   |   |   |   |-- test_2.json
+   |   |   |   |-- test_3.html
+   |   |   |   |-- test_3.json
+   |   |   |   |-- test_lenient.html
+   |   |   |   |-- test_lenient.json
+   |   |   |   |-- test_majority.html
+   |   |   |   |-- test_majority.json
+   |   |   |   |-- test_restrictive.html
+   |   |   |   |-- test_restrictive.json
+   |   |   |   |-- test_threshold.html
+   |   |   |   |-- test_threshold.json
+   
 
 ```
 

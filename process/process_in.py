@@ -17,16 +17,16 @@ def process_previously_generated(input_dir, output_format):
 
 def get_html_text(file):
     """ Collect the original text from an html file"""
-    print(f"openning file {file}")
     with open(file, "r", encoding="utf-8") as f:
         content = f.read()
     soup = bsoup(content, 'html.parser')
-    print(soup)
-    text = soup.body.get_text()
-    ## removing span tags
-    text = text.replace('<span class="r1">', '')
-    text = text.replace('</span>', '')
-    print(text)
+    try:
+        text = soup.body.get_text()
+        ## removing span tags
+        text = text.replace('<span class="r1">', '')
+        text = text.replace('</span>', '')
+    except AttributeError:
+        text = ''
     return text
 
 def get_json_text(file):
@@ -65,7 +65,7 @@ def collect_json(files):
         with open(file, "r", encoding="utf-8") as f:
             data = json.load(f)
         pii_items = set(item["value"] for item in data['entities'])
-        all_pii_list.extend(pii_items)
+        all_pii_list.extend(pii_items)    
     return all_pii_list
 
 ## Not currently using this one, but could switch to it
