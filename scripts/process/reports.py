@@ -1,8 +1,8 @@
 """reports.py"""
 import os
 from rich.console import Console
-from process.redact_pii import redact_text
-import config.pii_identification as pii_identification
+from redact_pii import redact_text
+import scripts.config.pii_identification as pii_identification
 
 def generate_html_report(text: str, predicted_entities: "list[str]"):
     """Format HTML output summary"""

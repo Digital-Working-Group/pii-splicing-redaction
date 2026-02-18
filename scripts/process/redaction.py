@@ -1,5 +1,5 @@
 """redaction.py"""
-from process.process_out import process_input_path
+from process_out import process_input_path
 from config.redaction_config import RedactionConfig
 
 def run_redaction(input_paths, **kwargs):

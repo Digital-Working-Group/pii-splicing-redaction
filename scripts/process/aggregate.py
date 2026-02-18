@@ -7,8 +7,8 @@ from bs4 import BeautifulSoup as bsoup
 from pathlib import Path
 from collections import Counter
 from dataclasses import asdict
-from process.reports import generate_html_report, generate_json_report
-from process.process_in import get_data_from_result, process_previously_generated, collect_html, collect_json
+from reports import generate_html_report, generate_json_report
+from process_in import get_data_from_result, process_previously_generated, collect_html, collect_json
 import json
 import os
 import re

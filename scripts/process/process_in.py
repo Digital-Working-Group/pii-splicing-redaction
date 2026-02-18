@@ -2,7 +2,7 @@
 from pathlib import Path
 import re
 import json
-from config.pii_identification import Entity
+from scripts.config.pii_identification import Entity
 from bs4 import BeautifulSoup as bsoup
 
 def process_previously_generated(input_dir, output_format):

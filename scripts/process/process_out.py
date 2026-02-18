@@ -3,10 +3,10 @@ import json
 from pathlib import Path
 from dataclasses import asdict
 from typing import TextIO
-from process.reports import generate_html_report, generate_json_report
-import process.llm as llm
+from reports import generate_html_report, generate_json_report
+import llm as llm
 import config.pii_identification as pii_identification
-from process.aggregate import aggregate_runs, process_aggregate_result
+from aggregate import aggregate_runs, process_aggregate_result
 
 def llm_message_out(output_file: TextIO, llm_raw_response: str):
     """Outputs raw llm message contents"""
