@@ -4,18 +4,18 @@ import re
 from pathlib import Path
 from typing import Any, Optional
 import ollama
-from scripts.config.pii_identification import Entity
+from config.pii_identification import Entity
 
 def create_prompt(text: str, prompt_type: str, prompt_fp: Optional[str] = None):
     """Create a formatted prompt to identify PII entities for the given model.
     If a custom prompt is provided, use that instead.
     The prompt should have a {text} format string that will be replaced with the text to redact.
     """
-    filepath = 'prompts/default_prompt.txt'
+    filepath = '../prompts/default_prompt.txt'
     if prompt_type == 'one_shot':
-        filepath = 'prompts/one_shot_prompt.txt'
+        filepath = '../prompts/one_shot_prompt.txt'
     elif prompt_type == 'few_shot':
-        filepath = 'prompts/few_shot_prompt.txt'
+        filepath = '../prompts/few_shot_prompt.txt'
     elif prompt_type == 'custom':
         if prompt_fp is None:
             raise FileNotFoundError('No filepath is specified for the custom prompt. Please provide a value for prompt_fp.')
