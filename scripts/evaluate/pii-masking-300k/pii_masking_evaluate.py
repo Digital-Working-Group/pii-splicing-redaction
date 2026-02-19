@@ -170,14 +170,14 @@ def process_pii_json(file, dataset, counts_dict, summary_df):
         summary_df.loc[len(summary_df)] = [str(file.name), word, status]
     return None
 
-def evaluate(model, aggregation, out_dir):
+def evaluate(model, aggregation, prompt_type, out_dir):
     """Evaluate PII """
     start_time = datetime.now()
     file_list, dataset, counts_dict, summary_df = init_data_structures()
     
-    paths = Path(f"{out_dir}/{model}").glob("**/*.json")
+    paths = Path(f"{out_dir}/{model}/{prompt_type}").glob("**/*.json")
     if aggregation:
-        paths = Path(f"{out_dir}/{model}").rglob(f"**/*{aggregation}.json")
+        paths = Path(f"{out_dir}/{model}/{prompt_type}").rglob(f"**/*{aggregation}.json")
     else:
         paths = [path for path in paths if re.match('.*\d+\.json$', path.name)]
     for file in paths:
@@ -189,7 +189,8 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", default="llama3.2")
     parser.add_argument("--aggregation", choices=['restrictive', 'threshold', 'majority', 'lenient'], default=None)
+    parser.add_argument("--prompt_type", default="default")
     parser.add_argument("--out_dir", default="out")
 
     args = parser.parse_args()
-    evaluate(args.model, args.aggregation, args.out_dir)
+    evaluate(args.model, args.aggregation, args.prompt_type, args.out_dir)
