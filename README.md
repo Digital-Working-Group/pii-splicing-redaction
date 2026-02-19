@@ -167,7 +167,7 @@ python main.py input_paths [input_paths ...] [-h] [-o OUTPUT_DIR] [--model MODEL
 | --temperature | The temperature (creativity) of the model. | None, Ollama defaults to 0.8. |
 | --seed | The random number seed to use for generation. | None, Ollama defaults to a random value. |
 | --num_runs | The number of times to run the redaction on each file. | 1 |
-| --prompt_type | Prompt to be passed to the LLM. (Options:: "default", "few_shot", "one_shot", "custom") | "default" |
+| --prompt_type | Prompt to be passed to the LLM. (Options: "default", "few_shot", "one_shot", "custom") | "default" |
 | --prompt_fp | If prompt_type is "custom", provide the path the the TXT file. | None |
 | --aggregation | If num_runs > 1, the aggregation method used to summaries the runs for each file. (Options: "restrictive", "threshold", "majority", "lenient") | "restrictive" |
 | --threshold | If aggregation type is "threshold", the threshold desired (i.e. 0.35, 0.75) | 0.5 |
@@ -319,6 +319,16 @@ Results of the Phi4 LLM model on the first 500 rows of [pii-masking-300k](https:
 - Precision: 91.8%
 - Recall: 84.6%
 - F1: 88.1%
+
+One Shot:
+- Precision: 91.8%
+- Recall: 66.8%
+- F1: 77.3%
+
+Few Shot:
+- Precision: 84.4%
+- Recall: 74.1%
+- F1: 78.9%
 
 For restrictive on 5 runs:
 - Precision: 84.3%

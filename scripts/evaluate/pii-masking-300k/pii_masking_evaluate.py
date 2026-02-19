@@ -77,7 +77,7 @@ def get_target_entities(privacy_mask):
             target_entities.add(word.lower())
     return target_entities
 
-def get_predicted_entities(entities, source_text_lower, counts_dict):
+def get_predicted_entities(entities, source_text_lower, counts_dict, verbose=False):
     """
     get predicted entities from entities
     if the word isn't in the source text, count it as a non-match
@@ -85,7 +85,8 @@ def get_predicted_entities(entities, source_text_lower, counts_dict):
     predicted_entities = set()
     for predicted_entity in entities:
         for word in re.split(r"[^a-zA-Z0-9]+", predicted_entity["value"]):
-            print("Predicted word", word)
+            if verbose:
+                print("Predicted word", word)
             word = word.lower()
             predicted_entities.add(word.lower())
             if word not in source_text_lower:
@@ -96,6 +97,7 @@ def classify_predictions(source_text_lower, predicted_entities, target_entities,
     """
     classify predicted entities as TP/FP/TN/FP
     """
+    print(source_text_lower)
     for word in re.split(r"[^a-zA-Z0-9]+", source_text_lower):
         is_predicted_pii = word in predicted_entities
         is_true_pii = word in target_entities
@@ -121,6 +123,8 @@ def init_data_structures():
     """
     file_list = []
     dataset = load_hugging_face_dataset()
+    print(f"dataset is {dataset}")
+    input()
     counts_dict = {
         'total_true_positives': 0,
         'total_false_positives': 0,
@@ -170,11 +174,12 @@ def evaluate(model, aggregation, out_dir):
     """Evaluate PII """
     start_time = datetime.now()
     file_list, dataset, counts_dict, summary_df = init_data_structures()
+    
     paths = Path(f"{out_dir}/{model}").glob("**/*.json")
     if aggregation:
         paths = Path(f"{out_dir}/{model}").rglob(f"**/*{aggregation}.json")
     else:
-        paths = [path for path in paths if not re.match('.*\d+\.json$', path.name)]
+        paths = [path for path in paths if re.match('.*\d+\.json$', path.name)]
     for file in paths:
         process_pii_json(file, dataset, counts_dict, summary_df)
         file_list.append(file)
