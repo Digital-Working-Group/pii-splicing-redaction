@@ -316,9 +316,22 @@ The `out/llama3.2/` directory will contain:
 # Performance Metrics on pii-masking-300k
 Results of the Phi4 LLM model on the first 500 rows of [pii-masking-300k](https://huggingface.co/datasets/ai4privacy/pii-masking-300k).
 
-- Precision: 91.8%
-- Recall: 84.6%
-- F1: 88.1%
+Phi4 (Default Prompt)
+
+| Aggregation | Precision | Recall | F1 |
+| -- | -- | -- | -- |
+| one run | 91.8% | 84.6% | 88.1% |
+| restricitve | 90.7% | 92.7% | 91.7% |
+| majority | 92.1%| 83.7% | 87.7% |
+| lenient | 91.2%' | 71.8%' | 80.3% |
+
+Llama3.2 (Default Prompt)
+| one run | 91.8% | 84.6% | 88.1% |
+| restricitve | 84.3% | 90.9% | 87.5% |
+| majority | 91.0% | 70.2% | 79.3% |
+| lenient | 86.1% | 54.0% | 66.4% |
+
+With LLama3.2
 
 One Shot:
 - Precision: 91.8%
@@ -330,20 +343,6 @@ Few Shot:
 - Recall: 74.1%
 - F1: 78.9%
 
-For restrictive on 5 runs:
-- Precision: 84.3%
-- Recall: 90.9%
-- F1: 87.5%
-
-For majority on 5 runs:
-- Precision: 91.0%
-- Recall: 70.2%
-- F1: 79.3%
-
-For lenient on 5 runs:
-- Precision: 86.1%
-- Recall: 54.0%
-- F1: 66.4%
 
 These results can be reproduced by running the [performance metric scripts](#calculate-performance-metrics-on-pii-masking-300k) and loading in the appropriate amount of data by adjusting the `set_size` to 500 in [export_pii_masking_300k.py](scripts/pii-masking-300k/export_pii_masking_300k.py). Note that these results were generated without setting the seed or the temperature, so results will vary, even though the input data are the same. There were N=31 predicted words that were non-matches (not in the original text).
 
