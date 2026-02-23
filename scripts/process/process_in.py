@@ -39,11 +39,14 @@ def collect_json_entities(files):
     """Collects the entities outputted as JSON files"""
     all_entities = []
     for file in files:
-        with open(file, "r", encoding="utf-8") as f:
-            data = json.load(f)
-        for entity in data['entities']:
-            all_entities.append(Entity(**entity))
-        # all_entities.extend(data['entities'])
+        try:
+            with open(file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+            
+            for entity in data['entities']:
+                all_entities.append(Entity(**entity))
+        except json.JSONDecodeError as e:
+            print(f"JSON Decode Error: {e}")
     return all_entities
 
 def collect_html(files):

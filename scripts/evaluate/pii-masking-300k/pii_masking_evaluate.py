@@ -150,8 +150,12 @@ def process_pii_json(file, dataset, counts_dict, summary_df):
     """
     process_pii_json
     """
-    with open(file, encoding='utf-8') as in_file:
-        json_data = json.load(in_file)
+    try:
+        with open(file, encoding='utf-8') as in_file:
+            json_data = json.load(in_file)
+    except json.JSONDecodeError:
+        counts_dict['error_count'] += 1
+        return None
     counts_dict['total_files'] += 1
     if json_data.get('errors') != []:
         counts_dict['error_count'] += 1
