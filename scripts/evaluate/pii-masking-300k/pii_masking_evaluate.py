@@ -194,7 +194,7 @@ def evaluate(model, aggregation, prompt_type, out_dir):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("--model", default="llama3.2")
-    parser.add_argument("--aggregation", choices=['restrictive', 'threshold', 'majority', 'lenient'], default=None)
+    parser.add_argument("--aggregation", choices=['restrictive', 'threshold', 'majority', 'lenient', 'one_run'], default=None)
     parser.add_argument("--prompt_type", default="default")
     parser.add_argument("--out_dir", default="out")
 
