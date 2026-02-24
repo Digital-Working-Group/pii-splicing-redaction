@@ -183,7 +183,7 @@ def evaluate(model, aggregation, prompt_type, out_dir):
     if aggregation:
         paths = Path(f"{out_dir}/{model}/{prompt_type}").rglob(f"**/*{aggregation}.json")
         if aggregation == "one_run":
-            paths = [path for path in paths if re.match('.*\\*_0.json$', path.name)]
+            paths = [path for path in paths if re.match('.*\\.*\d+\_0.json$', path.name)]
     else:
         paths = [path for path in paths if re.match('.*\d+\.json$', path.name)]
     for file in paths:
