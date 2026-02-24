@@ -65,8 +65,12 @@ def collect_json(files):
     """ Collect the results from individual runs outputted as JSON files"""
     all_pii_list = []
     for file in files:
-        with open(file, "r", encoding="utf-8") as f:
-            data = json.load(f)
+        try:
+            with open(file, "r", encoding="utf-8") as f:
+                data = json.load(f)
+        except json.JSONDecodeError:
+            print(f"Error decoding JSON in file {file}")
+            continue
         pii_items = set(item["value"] for item in data['entities'])
         all_pii_list.extend(pii_items)    
     return all_pii_list

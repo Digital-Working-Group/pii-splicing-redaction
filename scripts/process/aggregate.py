@@ -28,7 +28,7 @@ def run_aggregation(output_format, output_dir, aggregation, threshold):
                 redact_items = aggregate_runs(output_format, files, aggregation, threshold)
                 process_aggregate_result(agg_out_filepath, output_format, text, redact_items, total_entities)
             else:
-                print(f'Not enough files to perform aggregation. Found {len(files)} and need at least 2.')
+                print(f'Not enough files to perform aggregation in {subdir}. Found {len(files)} and need at least 2.')
         else:
             print(f'Skipping {subdir}, not a directory.')
 
