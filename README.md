@@ -12,11 +12,12 @@ This repository contains a tool to redact PII (personally identifiable informati
 5. [Running this tool - Programmatic Interface](#running-this-tool-programmatic-interface)
     - [Arguments](#arguments-1)
     - [Usage Example](#usage-example-1)
-6. [Calculate Performance Metrics on pii-masking-300k](#calculate-performance-metrics-on-pii-masking-300k)
-7. [Performance Metrics on pii-masking-300k](#performance-metrics-on-pii-masking-300k)
-8. [Models](#models)
-9. [Acknowledgements](#acknowledgements)
-10. [Citations](#citations)
+6. [Multiple Runs](#multiple-runs)
+7. [Calculate Performance Metrics on pii-masking-300k](#calculate-performance-metrics-on-pii-masking-300k)
+8. [Performance Metrics on pii-masking-300k](#performance-metrics-on-pii-masking-300k)
+9. [Models](#models)
+10. [Acknowledgements](#acknowledgements)
+11. [Citations](#citations)
 
 # Introduction
 See [main.py](main.py) and [redact_pii.py](redact_pii.py) for examples. Both will produce the same output given the same input, but [main.py](main.py) is written as a command line interface (CLI) and [redact_pii.py](redact_pii.py) uses keyword arguments via a programmatic interface. Please see the [CLI](#running-this-tool-command-line-interface-cli) and [progammatic interface](#running-this-tool-programmatic-interface) instructions respectively.
@@ -24,7 +25,7 @@ See [main.py](main.py) and [redact_pii.py](redact_pii.py) for examples. Both wil
 ## Sample Input and Output Files
 The tool expects plain text files as input. Optionally, the tool accepts a custom prompt to instruct the LLM, otherwise using the pre-written prompts. Extracted entities and redacted text are written in JSON or HTML format, based on the selected output format. Output files will be written to a directory named after the LLM model that was selected.
 
-A sample input file can be found in `sample_redaction/sample_input/`. Sample output files (JSON and HTML) from utilizing the llama3.2 model can be found in `sample_redaction/sample_output/llama3.2`. Sample raw LLM response output files can be found in `sample_redaction/sample_output/llama3.2/llm_raw_response/<output_filename>-<output_file_extension>.json`.
+A sample input file can be found in `sample_redaction/sample_input/`. Sample output files (JSON and HTML) from utilizing the llama3.2 model can be found in `sample_redaction/sample_output/llama3.2`. Sample raw LLM response output files can be found in `sample_redaction/sample_output/llama3.2/<prompt_type>/llm_raw_response/<output_filename>-<output_file_extension>.json`.
 
 ```
 sample_redaction
@@ -69,17 +70,17 @@ Please see the plain text file [test.txt](sample_redaction/sample_input/test.txt
 Please see the [prompts](prompts/) for the provided prompt options or [sample_custom_prompt.txt](prompts/sample_custom_prompt.txt) for a template to create a custom prompt.
 
 ### Sample Output Files
-See `process_file_json_out()` and `process_file_html_out()` in [process_out.py](process_out.py) for full details on how the output JSON/HTML files are created.
+See `process_file_json_out()` and `process_file_html_out()` in [process_out.py](./scripts/process/process_out.py) for full details on how the output JSON/HTML files are created.
 
-The [test.json](sample_redaction/sample_output/llama3.2/test.json) file contains:
+An output JSON file, for example [test_0.json](sample_redaction/sample_output/llama3.2/default/test/test_0.json) contains:
 - An `entities` key, which contains a parsed list of dictionaries, where `type` contains the category of PII that was identified and `value` contains the words that comprise the identified PII.
 - A `source_text` key, which contains the original text from the input file.
 - A `redacted_text` key, which contains the source text from the input file, but with `<PII>` replacing all the identified PII entities (see `redact_text()` in [redaction.py](redaction.py)).
 - An `errors` key, which will contain a string of the error message that occurred when trying to parse the model's LLM output. The `entities` list should be empty if errors is not an empty list. If an error occurs, the llm_raw_response file is still created.
 
-The [test.html](sample_redaction/sample_output/llama3.2/test.html) file contains the text from the input file with the predicted entities in purple.
+An output HTML file, for example [test_0.html](sample_redaction/sample_output/llama3.2/default/test/test_0.html), contains the text from the input file with the predicted entities in purple.
 
-The [test-html.json](sample_redaction/sample_output/llama3.2/llm_raw_response/test-html.json) and [test-json.json](sample_redaction/sample_output/llama3.2/llm_raw_response/test-json.json) files contain the raw LLM response when running the tool with llama3.2 on test.html and test.json respectively. See `llm_message_out()` in [process_out.py](process_out.py) for further details.
+The [test_0-html.json](sample_redaction/sample_output/llama3.2/default/test/llm_raw_response/test_0-html.json) and [test_0-json.json](sample_redaction/sample_output/llama3.2/default/test/llm_raw_response/test_0-json.json) files contain the raw LLM response when running the tool with llama3.2 on test.html and test.json respectively. See `llm_message_out()` in [process_out.py](./scripts/process/process_out.py) for further details.
 
 # Installation
 ## Without Docker
@@ -177,11 +178,13 @@ See [main.py](main.py) for details on the CLI script implementation.
 ## Usage Example
 Assuming that your text files are in a folder called `sample_redaction/sample_input` and the folder `sample_redaction/sample_output` exists to store the redaction output, use the following command to use the llama3.2 model for redaction:
 ```sh
+cd scripts
 python main.py --model YOUR_MODEL ./YOUR_INPUT_FILEPATH -o ./YOUR_OUTPUT_FILEPATH
 ```
 For instance, you could run:
 ```sh
-python main.py --model llama3.2 ./sample_redaction/sample_input -o ./sample_redaction/sample_output
+cd scripts
+python main.py --model llama3.2 ../sample_redaction/sample_input -o ../sample_redaction/sample_output
 ```
 See [Sample Input and Output Files](#sample-input-and-output-files) for more information on input and output files.
 
@@ -206,7 +209,7 @@ For more details on optional arguments, please see [Ollama's official documentat
 ```sh
 ollama show --parameters YOUR-MODEL
 ```
-See [redact_pii.py](redact_pii.py) for the script's implementation and to adjust any keyword arguments.
+See [redact_pii.py](./scripts/process/redact_pii.py) for the script's implementation and to adjust any keyword arguments.
 
 ### Usage Example
 Assuming that your text files are in a folder called `sample_redaction/sample_input` and the folder `sample_redaction/sample_output` exists to store the redaction output, use the following command to use the llama3.2 model for redaction:
@@ -214,7 +217,7 @@ Assuming that your text files are in a folder called `sample_redaction/sample_in
 from redact_pii import run_redaction
 run_redaction([YOUR_INPUT_FILEPATH], OPTIONAL_KWARGS)
 ```
-For instance, you could run (please see [sample_run.py](sample_run.py)):
+For instance, you could run (please see [sample_run.py](./scripts/sample_run.py)):
 ```py
 from redact_pii import run_redaction
 
@@ -222,10 +225,10 @@ def main():
     """
     main entrypoint
     """
-    kwargs = {"output_dir": "./sample_redaction/sample_output", "output_format": "json", "model": "llama3.2"}
-    run_redaction(["./sample_redaction/sample_input"], **kwargs)
-    kwargs = {"output_dir": "./sample_redaction/sample_output", "output_format": "html", "model": "llama3.2"}
-    run_redaction(["./sample_redaction/sample_input"], **kwargs)
+    kwargs = {"output_dir": "../sample_redaction/sample_output", "output_format": "json", "model": "llama3.2"}
+    run_redaction(["../sample_redaction/sample_input"], **kwargs)
+    kwargs = {"output_dir": "../sample_redaction/sample_output", "output_format": "html", "model": "llama3.2"}
+    run_redaction(["../sample_redaction/sample_input"], **kwargs)
 
 if __name__ == '__main__':
     main()
@@ -241,6 +244,15 @@ This tool supports the option to run N times on the same text and aggregate the 
 | majority | 0.5 |
 | lenient | 1 |
 | threshold | user provided threshold |
+
+If you would like to re-aggregate previous multiple runs using a different threshold value, see [scripts/run_aggregate](./scripts/run_aggregate.py). This takes in described above for running `main.py` using the CLI, allowing you to redefine which aggregation threshold to use. 
+For instance, you could run:
+```sh
+cd scripts
+ python run_aggregate.py --output_dir ../out/llama3.2/default --aggregation lenient
+```
+
+This assumes that `../out/llama3.2/default` holds files from a previous run where each file was processed more than once. 
 
 # Calculate Performance Metrics on pii-masking-300k
 If you are not already logged into the Hugging Face CLI from your machine, you will need to provide a user token. To create and access your user token, follow the steps below:
@@ -263,20 +275,28 @@ To evaluate the performance of this model, run the commands below in the root of
 ```sh
 mkdir data out
 cd data
-python ../scripts/pii-masking-300k/export_pii_masking_300k.py
+python ../scripts/evaluate/pii-masking-300k/export_pii_masking_300k.py
 cd ..
-python main.py --model llama3.2 ./data -o ./out
-python scripts/pii-masking-300k/pii_masking_evaluate.py
+cd scripts
+python main.py --model llama3.2 ../data -o ../out
+python scripts/evaluate/pii-masking-300k/pii_masking_evaluate.py
 ```
 
 The default settings in [export_pii_masking_300k.py](scripts/pii-masking-300k/export_pii_masking_300k.py) will pull 10 files (see `set_size` in load_hugging_face_dataset()) from the `pii-masking-300k` dataset and write them to txt files in the data/ folder (0.txt, 1.txt, ...).
 
-By default, [pii_masking_evaluate.py](scripts/pii-masking-300k/pii_masking_evaluate.py) will iterate over the contents `out/llama3.2` for JSON files (see `evaluate()`). A different model name can be supplied to pii_masking_evaluate.py to iterate over that directory instead.
+By default, [pii_masking_evaluate.py](scripts/pii-masking-300k/pii_masking_evaluate.py) will iterate over the contents `out/llama3.2/default` for JSON files (see `evaluate()`). A different model name can be supplied to pii_masking_evaluate.py to iterate over that directory instead.
 
 ```sh
-python scripts/pii-masking-300k/pii_masking_evaluate.py ## targets out/llama3.2
-python scripts/pii-masking-300k/pii_masking_evaluate.py llama3.2 ## targets out/llama3.2
-python scripts/pii-masking-300k/pii_masking_evaluate.py phi4 ## targets out/phi4
+python scripts/evaluate/pii-masking-300k/pii_masking_evaluate.py ## targets out/llama3.2/default
+python scripts/evaluate/pii-masking-300k/pii_masking_evaluate.py --model llama3.2 ## targets out/llama3.2/default
+python scripts/evaluate/pii-masking-300k/pii_masking_evaluate.py --model phi4 ## targets out/phi4/default
+python scripts/evaluate/pii-masking-300k/pii_masking_evaluate.py --model phi4 --prompt_type one_shot ## targets out/phi4/one_shot
+```
+
+You many also evaluate aggregate results by supplying the aggregation name. If you chose to run multiple runs but want to evaluate a single run, use `one_run` as the value for the aggregation flag.
+```sh
+python scripts/evaluate/pii-masking-300k/pii_masking_evaluate.py --model phi4 --aggregation one_run ## targets the first file found in each subfolder of /out/phi4/default
+python scripts/evaluate/pii-masking-300k/pii_masking_evaluate.py --model phi4 --aggregation majority ## targets majority files found in /out/phi4/default
 ```
 
 To calculate the counts for the summary, the script iterates over the source text one word at a time, comparing each word to the list of predicted entities (PII identified by the LLM) and the list of target entities (the dataset's privacy mask). If a word occurs multiple times within the text, each occurrence will be counted in the summary.
@@ -294,57 +314,85 @@ Each word will be identified as one of the following:
 ```
 out
    |-- llama3.2
-   |   |-- llm_raw_response
-   |   |   |-- 0-json.json
-   |   |   |-- 1-json.json ## N-json.json for every input file
-   |   |-- summaries
-   |   |   |-- summary_YYYYMMDD_HHMMSS.json
-   |   |   |-- summary_YYYYMMDD_HHMMSS.xlsx
-   |   |-- 0.json
-   |   |-- 1.json ## N.json for every input file
+   |   |-- default
+   |   |   |-- llm_raw_response
+   |   |   |   |-- 0-json.json
+   |   |   |   |-- 1-json.json ## N-json.json for every input file
+   |   |   |-- summaries
+   |   |   |   |-- summary_YYYYMMDD_HHMMSS.json
+   |   |   |   |-- summary_YYYYMMDD_HHMMSS.xlsx
+   |   |   |-- 0.json
+   |   |   |-- 1.json ## N.json for every input file
 
 ```
 Further information on the structure of the output files can be seen in the [Sample Output Files](#sample-output-files) section.
 
-The `out/llama3.2/` directory will contain:
-- The output JSON files (0.json, 1.json, ...9.json) from the PII redaction (same structure as [test.json](sample_redaction/sample_output/llama3.2/test.json)).
-- A `llm_raw_response/` folder that contains the raw LLM response for each respective input file (same structure as [test-json.json](sample_redaction/sample_output/llama3.2/llm_raw_response/test-json.json)).
+The `out/llama3.2/default` directory will contain:
+- The output JSON files (0.json, 1.json, ...9.json) from the PII redaction (same structure as [test_0.json](sample_redaction/sample_output/llama3.2/default/test_0.json)).
+- A `llm_raw_response/` folder that contains the raw LLM response for each respective input file (same structure as [test-json_0.json](sample_redaction/sample_output/llama3.2/default/llm_raw_response/test-json_0.json)).
 - A `summaries/` folder that contains:
-    - A timestamped `summary_YYYY_MM_DD_HHMMSS.json` file that contains the performance metrics and other information. (see `write_summary_json()` in [pii_masking_evaluate.py](scripts/pii-masking-300k/pii_masking_evaluate.py))
-    - A timestamped `summary_YYYY_MM_DD_HHMMSS.xlsx` file that contains a Summary tab, and then individual tabs for each output JSON file that had no errors. (see `write_summary_xlsx()`in [pii_masking_evaluate.py](scripts/pii-masking-300k/pii_masking_evaluate.py))
+    - A timestamped `summary_YYYY_MM_DD_HHMMSS.json` file that contains the performance metrics and other information. (see `write_summary_json()` in [pii_masking_evaluate.py](scripts/evaluate/pii-masking-300k/pii_masking_evaluate.py))
+    - A timestamped `summary_YYYY_MM_DD_HHMMSS.xlsx` file that contains a Summary tab, and then individual tabs for each output JSON file that had no errors. (see `write_summary_xlsx()`in [pii_masking_evaluate.py](scripts/evalutate/pii-masking-300k/pii_masking_evaluate.py))
 
 # Performance Metrics on pii-masking-300k
-Results of the Phi4 LLM model on the first 500 rows of [pii-masking-300k](https://huggingface.co/datasets/ai4privacy/pii-masking-300k).
+Results of the Phi4 and Llama3.2 LLM models on the first 500 rows of [pii-masking-300k](https://huggingface.co/datasets/ai4privacy/pii-masking-300k).
 
-Phi4 (Default Prompt)
+**Phi4 (Default Prompt)**
 
 | Aggregation | Precision | Recall | F1 |
 | -- | -- | -- | -- |
 | one run | 91.8% | 84.6% | 88.1% |
-| restricitve | 90.7% | 92.7% | 91.7% |
+| restrictive | 90.7% | 92.7% | 91.7% |
 | majority | 92.1%| 83.7% | 87.7% |
-| lenient | 91.2%' | 71.8%' | 80.3% |
+| lenient | 91.2% | 71.8% | 80.3% |
 
-Llama3.2 (Default Prompt)
+**Phi4 (One Shot Prompt)**
+
+| Aggregation | Precision | Recall | F1 |
+| -- | -- | -- | -- |
+| one run | 93.3% | 74.9% | 83.1% |
+| restrictive | 90.7% | 92.7% | 91.7% |
+| majority | 93.2%| 72.8% | 81.8% |
+| lenient | 92.2% | 58.2% | 71.4% |
+
+**Phi4 (Few Shot Prompt)**
+
+| Aggregation | Precision | Recall | F1 |
+| -- | -- | -- | -- |
+| one run | 90.3% | 84.6% | 88.5% |
+| restrictive | 89.6% | 94.0% | 91.7% |
+| majority | 90.9% | 86.1% | 88.4% |
+| lenient | 89.3% | 74.0% | 80.9% |
+
+
+**Llama3.2 (Default Prompt)**
+
+| Aggregation | Precision | Recall | F1 |
+| -- | -- | -- | -- |
 | one run | 91.8% | 84.6% | 88.1% |
-| restricitve | 84.3% | 90.9% | 87.5% |
+| restrictive | 84.3% | 90.9% | 87.5% |
 | majority | 91.0% | 70.2% | 79.3% |
 | lenient | 86.1% | 54.0% | 66.4% |
 
-With LLama3.2
+**Llama3.2 (One Shot Prompt)**
 
-One Shot:
-- Precision: 91.8%
-- Recall: 66.8%
-- F1: 77.3%
+| Aggregation | Precision | Recall | F1 |
+| -- | -- | -- | -- |
+| one run | 91.8% | 66.8% | 77.3% |
+| restrictive | 89.6% | 94.0% | 91.7% |
+| majority | 90.9% | 63.5% | 74.8% |
+| lenient | 84.9% | 86.4% | 85.7% |
 
-Few Shot:
-- Precision: 84.4%
-- Recall: 74.1%
-- F1: 78.9%
+**Llama3.2 (Few Shot Prompt)**
 
+| Aggregation | Precision | Recall | F1 |
+| -- | -- | -- | -- |
+| one run | 84.4% | 74.1% | 78.9% |
+| restrictive | 74.2% | 90.1% | 81.4% |
+| majority | 84.2% | 72.8% | 78.1% |
+| lenient | 76.8% | 67.0% | 71.6% |
 
-These results can be reproduced by running the [performance metric scripts](#calculate-performance-metrics-on-pii-masking-300k) and loading in the appropriate amount of data by adjusting the `set_size` to 500 in [export_pii_masking_300k.py](scripts/pii-masking-300k/export_pii_masking_300k.py). Note that these results were generated without setting the seed or the temperature, so results will vary, even though the input data are the same. There were N=31 predicted words that were non-matches (not in the original text).
+These results can be reproduced by running the [performance metric scripts](#calculate-performance-metrics-on-pii-masking-300k) and loading in the appropriate amount of data by adjusting the `set_size` to 500 in [export_pii_masking_300k.py](scripts/evaluate/pii-masking-300k/export_pii_masking_300k.py). Note that these results were generated without setting the seed or the temperature, so results will vary, even though the input data are the same. There were N=31 predicted words that were non-matches (not in the original text).
 
 # Models
 Current supported models and approximate GPU VRAM requirements are:
