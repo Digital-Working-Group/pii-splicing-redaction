@@ -255,23 +255,36 @@ ollama show --parameters YOUR-MODEL
 See [redact_pii.py](./scripts/process/redact_pii.py) for the script's implementation and to adjust any keyword arguments.
 
 ### Usage Example
-Assuming that your text files are in a folder called `sample_redaction/sample_input` and the folder `sample_redaction/sample_output` exists to store the redaction output, use the following command to use the llama3.2 model for redaction:
+Assuming that your text files are in a folder called `sample_redaction/sample_input` and the folder `sample_redaction/sample_output` exists to store the redaction output, please see [sample_run.py](./scripts/sample_run.py)):
 ```py
-from redact_pii import run_redaction
-run_redaction([YOUR_INPUT_FILEPATH], OPTIONAL_KWARGS)
-```
-For instance, you could run (please see [sample_run.py](./scripts/sample_run.py)):
-```py
-from redact_pii import run_redaction
+"""
+sample_run.py
+example of running run_redaction() from app.redact_pii
+"""
+from process.redaction import run_redaction
+from process.aggregate import run_aggregation
 
 def main():
     """
     main entrypoint
     """
-    kwargs = {"output_dir": "../sample_redaction/sample_output", "output_format": "json", "model": "llama3.2"}
-    run_redaction(["../sample_redaction/sample_input"], **kwargs)
-    kwargs = {"output_dir": "../sample_redaction/sample_output", "output_format": "html", "model": "llama3.2"}
-    run_redaction(["../sample_redaction/sample_input"], **kwargs)
+    ## Run aggregation redaction on unprocessed files
+    for prompt in ['default', 'one_shot', 'few_shot']:
+        ## Run aggregation redaction on unprocessed files
+        kwargs = {"output_dir": "./sample_redaction/sample_output", "output_format": "json", "model": "phi4", "prompt_type": prompt,
+                    "num_runs": 4, "aggregation": "majority"}
+        run_redaction(["./sample_redaction/sample_input"], **kwargs)
+        kwargs = {"output_dir": "./sample_redaction/sample_output", "output_format": "html", "model": "phi4", "prompt_type": prompt,
+                    "num_runs": 4, "aggregation": "majority"}
+        run_redaction(["./sample_redaction/sample_input"], **kwargs)
+
+        ## Run aggregation redaction on previously processed files
+        run_aggregation("json", f"./sample_redaction/sample_output/phi4/{prompt}", "lenient", None)
+        run_aggregation("html", f"./sample_redaction/sample_output/phi4/{prompt}", "lenient", None)
+        run_aggregation("json", f"./sample_redaction/sample_output/phi4/{prompt}", "restrictive", None)
+        run_aggregation("html", f"./sample_redaction/sample_output/phi4/{prompt}", "restrictive", None)
+        run_aggregation("json", f"./sample_redaction/sample_output/phi4/{prompt}", "threshold", 0.75)
+        run_aggregation("html", f"./sample_redaction/sample_output/phi4/{prompt}", "threshold", 0.75)
 
 if __name__ == '__main__':
     main()
