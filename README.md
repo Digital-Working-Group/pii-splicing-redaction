@@ -156,7 +156,28 @@ Please run [jupyter notebook](https://docs.jupyter.org/en/latest/running.html) a
 # Running this tool: Command Line Interface (CLI)
 ## Arguments
 ```sh
-python main.py input_paths [input_paths ...] [-h] [-o OUTPUT_DIR] [--model MODEL] [--output_format OUTPUT_FORMAT] [--temperature TEMPERATURE] [--seed SEED] [--num_runs NUM_RUNS] [--prompt]
+python main.py -h
+usage: main.py [-h] [-o OUTPUT_DIR] [--model MODEL] [--output_format {json,html}]
+               [--num_runs NUM_RUNS] [--temperature TEMPERATURE] [--seed SEED]
+               [--prompt_type PROMPT_TYPE] [--prompt_fp PROMPT_FP]
+               [--aggregation {restrictive,threshold,majority,lenient}] [--threshold THRESHOLD]
+               input_paths [input_paths ...]
+
+positional arguments:
+  input_paths
+
+options:
+  -h, --help            show this help message and exit
+  -o OUTPUT_DIR, --output_dir OUTPUT_DIR
+  --model MODEL
+  --output_format {json,html}
+  --num_runs NUM_RUNS
+  --temperature TEMPERATURE
+  --seed SEED
+  --prompt_type PROMPT_TYPE
+  --prompt_fp PROMPT_FP
+  --aggregation {restrictive,threshold,majority,lenient}
+  --threshold THRESHOLD
 ```
 | Flag | Description | Default Value |
 |---|---|---|
