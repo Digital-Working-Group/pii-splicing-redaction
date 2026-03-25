@@ -205,12 +205,27 @@ python main.py --model YOUR_MODEL ./YOUR_INPUT_FILEPATH -o ./YOUR_OUTPUT_FILEPAT
 For instance, you could run:
 ```sh
 cd scripts
-python main.py --model phi4../sample_redaction/sample_input -o ../sample_redaction/sample_output
+python main.py --model phi4 ../sample_redaction/sample_input -o ../sample_redaction/sample_output
 ```
 
 ```sh
 cd scripts
-python main.py --model phi4../sample_redaction/sample_input -o ../sample_redaction/sample_output
+python main.py --model phi4 --num_runs 3 --prompt_type default --aggregation restrictive ../sample_redaction/sample_input -o ../sample_redaction/sample_output
+```
+
+```sh
+cd scripts
+python main.py --model phi4 --num_runs 3 --prompt_type default --aggregation threshold --threshold 0.25 ../sample_redaction/sample_input -o ../sample_redaction/sample_output
+```
+
+```sh
+cd scripts
+python main.py --model phi4 --num_runs 3 --prompt_type default --aggregation majority ../sample_redaction/sample_input -o ../sample_redaction/sample_output
+```
+
+```sh
+cd scripts
+python main.py --model phi4 --num_runs 3 --prompt_type default --aggregation lenient ../sample_redaction/sample_input -o ../sample_redaction/sample_output
 ```
 
 See [Sample Input and Output Files](#sample-input-and-output-files) for more information on input and output files.
