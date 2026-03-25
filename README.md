@@ -170,7 +170,7 @@ python main.py input_paths [input_paths ...] [-h] [-o OUTPUT_DIR] [--model MODEL
 | --num_runs | The number of times to run the redaction on each file. | 1 |
 | --prompt_type | Prompt to be passed to the LLM. (Options: "default", "few_shot", "one_shot", "custom") | "default" |
 | --prompt_fp | If prompt_type is "custom", provide the path the the TXT file. | None |
-| --aggregation | If num_runs > 1, the aggregation method used to summaries the runs for each file. (Options: "restrictive", "threshold", "majority", "lenient") | "restrictive" |
+| --aggregation | If num_runs > 1, the aggregation method used to summarize the runs for each file. (Options: "restrictive", "threshold", "majority", "lenient") | "restrictive" |
 | --threshold | If aggregation type is "threshold", the threshold desired (i.e. 0.35, 0.75) | 0.5 |
 
 See [main.py](main.py) for details on the CLI script implementation.
@@ -184,8 +184,14 @@ python main.py --model YOUR_MODEL ./YOUR_INPUT_FILEPATH -o ./YOUR_OUTPUT_FILEPAT
 For instance, you could run:
 ```sh
 cd scripts
-python main.py --model llama3.2 ../sample_redaction/sample_input -o ../sample_redaction/sample_output
+python main.py --model phi4../sample_redaction/sample_input -o ../sample_redaction/sample_output
 ```
+
+```sh
+cd scripts
+python main.py --model phi4../sample_redaction/sample_input -o ../sample_redaction/sample_output
+```
+
 See [Sample Input and Output Files](#sample-input-and-output-files) for more information on input and output files.
 
 # Running this tool: Programmatic Interface
@@ -198,7 +204,7 @@ The `scripts.process.redaction.run_redaction()`  function takes in an input path
 | model | str | The language model to use. | phi4 |
 | prompt_type | str | Prompt to be passed to the LLM. (Options:: "default", "few_shot", "one_shot", "custom") | "default" |
 | num_runs | int | The number of times to run the redaction on each file. | 1 |
-| aggregation | str | If num_runs > 1, the aggregation method used to summaries the runs for each file. (Options: "restrictive", "threshold", "majority", "lenient") | "restrictive" |
+| aggregation | str | If num_runs > 1, the aggregation method used to summarize the runs for each file. (Options: "restrictive", "threshold", "majority", "lenient") | "restrictive" |
 | threshold | float | If aggregation type is "threshold", the threshold desired (i.e. 0.35, 0.75) | 0.5 |
 | temperature | float | The temperature (creativity) of the model. | None, Ollama defaults to 0.8. |
 | seed | int | The random number seed to use for generation. | None, Ollama defaults to a random value. |
