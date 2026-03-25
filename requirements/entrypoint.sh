@@ -4,9 +4,9 @@
 ollama serve & 2>&1 > /dev/null &
 
 # # Wait until ready
-# until ollama list > /dev/null 2>&1; do
-#   sleep 1
-# done
+until ollama list > /dev/null 2>&1; do
+  sleep 1
+done
 
 # # Pull model if not already present
 # # Pull model only if missing
