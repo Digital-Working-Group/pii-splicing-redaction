@@ -124,7 +124,7 @@ or with Windows:
 
 Install requirements:
 ```sh
-pip install -r requirements.txt
+pip install -r requirements/requirements.txt
 ```
 
 ## With Docker
