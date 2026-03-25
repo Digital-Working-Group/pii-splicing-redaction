@@ -6,7 +6,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument("input_paths", nargs="+")
     parser.add_argument("-o", "--output_dir", default="../data/output")
-    parser.add_argument("--model", default="llama3.2")
+    parser.add_argument("--model", default="phi4")
     parser.add_argument("--output_format", choices=["json", "html"], default="json")
     parser.add_argument("--num_runs", type=int, default=1)
     parser.add_argument("--temperature", default=None)
