@@ -2,6 +2,10 @@
     "entities": [
         {
             "type": "first_name",
+            "value": "Sarah"
+        },
+        {
+            "type": "first_name",
             "value": "Ethan"
         },
         {
@@ -15,10 +19,6 @@
         {
             "type": "location",
             "value": "Cascade Valley"
-        },
-        {
-            "type": "first_name",
-            "value": "Sarah"
         },
         {
             "type": "name",

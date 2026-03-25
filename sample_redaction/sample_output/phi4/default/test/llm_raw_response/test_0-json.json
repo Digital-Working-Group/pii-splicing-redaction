@@ -1,17 +1,17 @@
 {
     "model": "phi4",
-    "created_at": "2026-03-25T18:43:26.411880253Z",
+    "created_at": "2026-03-25T18:58:49.162744761Z",
     "done": true,
     "done_reason": "stop",
-    "total_duration": 4760872116,
-    "load_duration": 3097776126,
+    "total_duration": 4898012171,
+    "load_duration": 2797194139,
     "prompt_eval_count": 439,
-    "prompt_eval_duration": 195199109,
-    "eval_count": 66,
-    "eval_duration": 1397081679,
+    "prompt_eval_duration": 263257023,
+    "eval_count": 80,
+    "eval_duration": 1756141916,
     "message": {
         "role": "assistant",
-        "content": "```json\n[\n    {\"type\": \"first_name\", \"value\": \"Ethan\"},\n    {\"type\": \"last_name\", \"value\": \"Rivers\"},\n    {\"type\": \"location\", \"value\": \"Lake Serenity\"},\n    {\"type\": \"location\", \"value\": \"Cascade Valley\"}\n]\n```",
+        "content": "```json\n[\n    {\"type\": \"first_name\", \"value\": \"Sarah\"},\n    {\"type\": \"first_name\", \"value\": \"Ethan\"},\n    {\"type\": \"last_name\", \"value\": \"Rivers\"},\n    {\"type\": \"location\", \"value\": \"Lake Serenity\"},\n    {\"type\": \"location\", \"value\": \"Cascade Valley\"}\n]\n```",
         "images": null,
         "tool_calls": null
     }

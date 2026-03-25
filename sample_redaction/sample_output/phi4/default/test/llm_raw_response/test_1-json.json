@@ -1,17 +1,17 @@
 {
     "model": "phi4",
-    "created_at": "2026-03-25T18:43:27.353432549Z",
+    "created_at": "2026-03-25T18:58:50.124692405Z",
     "done": true,
     "done_reason": "stop",
-    "total_duration": 939057528,
-    "load_duration": 58485777,
+    "total_duration": 959423252,
+    "load_duration": 58975479,
     "prompt_eval_count": 439,
-    "prompt_eval_duration": 37566812,
-    "eval_count": 37,
-    "eval_duration": 800575803,
+    "prompt_eval_duration": 25215041,
+    "eval_count": 36,
+    "eval_duration": 834326819,
     "message": {
         "role": "assistant",
-        "content": "```json\n[\n    {\"type\": \"first_name\", \"value\": \"Ethan\"},\n    {\"type\": \"last_name\", \"value\": \"Rivers\"}\n]\n```",
+        "content": "```json\n[\n    {\"type\": \"first_name\", \"value\": \"Sarah\"},\n    {\"type\": \"name\", \"value\": \"Ethan Rivers\"}\n]\n```",
         "images": null,
         "tool_calls": null
     }

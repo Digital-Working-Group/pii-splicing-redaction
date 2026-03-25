@@ -5,10 +5,6 @@ RUN apt-get update && apt-get install python3 python3-pip -y
 RUN echo 'alias python=python3' >> ~/.bashrc
 COPY requirements.txt .
 RUN pip3 install -r requirements.txt --break-system-packages
-
-#RUN apt-get update && apt-get install -y dos2unix && apt-get install python3 python3-pip -y && apt-get clean autoclean && rm -rf /var/lib/apt/lists/*
-#RUN --mount=type=bind,source=requirements.txt,target=requirements.txt pip3 install -r requirements.txt
-
 WORKDIR /entry
 COPY entrypoint.sh .
 RUN chmod +x entrypoint.sh
