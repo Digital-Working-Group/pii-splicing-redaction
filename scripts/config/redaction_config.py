@@ -8,7 +8,7 @@ from typing import Optional
 class RedactionConfig:
     output_dir: str = "./sample_redaction/sample_output"
     output_format: str = "json"
-    model: str = "llama3.2"
+    model: str = "phi4"
     prompt_type: str = "default"
     num_runs: int = 1
     aggregation: Optional[str] = None

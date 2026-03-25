@@ -163,7 +163,7 @@ python main.py input_paths [input_paths ...] [-h] [-o OUTPUT_DIR] [--model MODEL
 | input_paths | List of paths to input files or directories. If a directory is specified, only files with the `.txt` extension are processed. | None |
 | -h | If included, describes the script's args. | None |
 | -o | Output directory where JSON result files will be written. | "/data/output" |
-| --model | The language model to use. | "llama3.2" |
+| --model | The language model to use. | "phi4 |
 | --output_format | Defines the output file type. It must either be JSON or HTML. | JSON |
 | --temperature | The temperature (creativity) of the model. | None, Ollama defaults to 0.8. |
 | --seed | The random number seed to use for generation. | None, Ollama defaults to a random value. |
@@ -190,19 +190,20 @@ See [Sample Input and Output Files](#sample-input-and-output-files) for more inf
 
 # Running this tool: Programmatic Interface
 ## Arguments
-The `redact_pii.run_redaction()`  function takes in an input paths list (`input_paths`) and a set of keyword arguments, described below.
+The `scripts.process.redaction.run_redaction()`  function takes in an input paths list (`input_paths`) and a set of keyword arguments, described below.
 | Keyword Argument | Type | Description | Default Value |
 |---|---|---|---|
 | output_dir | str | Output directory where output files (HTML or JSON) will be written. | "./sample_redaction/sample_output" |
 | output_format | str | Defines the output file type. It must either be JSON or HTML. | JSON |
-| model | str | The language model to use. | llama3.2 |
-| temperature | float | The temperature (creativity) of the model. | None, Ollama defaults to 0.8. |
-| seed | int | The random number seed to use for generation. | None, Ollama defaults to a random value. |
-| num_runs | int | The number of times to run the redaction on each file. | 1 |
+| model | str | The language model to use. | phi4 |
 | prompt_type | str | Prompt to be passed to the LLM. (Options:: "default", "few_shot", "one_shot", "custom") | "default" |
-| prompt_fp | str | If prompt_type is "custom", provide the path the the TXT file. | None |
+| num_runs | int | The number of times to run the redaction on each file. | 1 |
 | aggregation | str | If num_runs > 1, the aggregation method used to summaries the runs for each file. (Options: "restrictive", "threshold", "majority", "lenient") | "restrictive" |
 | threshold | float | If aggregation type is "threshold", the threshold desired (i.e. 0.35, 0.75) | 0.5 |
+| temperature | float | The temperature (creativity) of the model. | None, Ollama defaults to 0.8. |
+| seed | int | The random number seed to use for generation. | None, Ollama defaults to a random value. |
+| prompt_fp | str | If prompt_type is "custom", provide the path the the TXT file. | None |
+
 
 For more details on optional arguments, please see [Ollama's official documentation](https://ollama.readthedocs.io/en/modelfile/#valid-parameters-and-values). To see if your model via Ollama has any different default options different from the official documentation, you can run:
 
