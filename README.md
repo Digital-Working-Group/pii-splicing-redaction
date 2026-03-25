@@ -114,7 +114,7 @@ python -m venv .venv
 
 Activate your virtual environment:
 ```sh
-.venv/bin/activate
+source .venv/bin/activate
 ```
 
 or with Windows:
