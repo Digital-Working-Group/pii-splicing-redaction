@@ -25,40 +25,30 @@ See [main.py](main.py) and [redact_pii.py](redact_pii.py) for examples. Both wil
 ## Sample Input and Output Files
 The tool expects plain text files as input. Optionally, the tool accepts a custom prompt to instruct the LLM, otherwise using the pre-written prompts. Extracted entities and redacted text are written in JSON or HTML format, based on the selected output format. Output files will be written to a directory named after the LLM model that was selected.
 
-A sample input file can be found in `sample_redaction/sample_input/`. Sample output files (JSON and HTML) from utilizing the llama3.2 model can be found in `sample_redaction/sample_output/llama3.2`. Sample raw LLM response output files can be found in `sample_redaction/sample_output/llama3.2/<prompt_type>/llm_raw_response/<output_filename>-<output_file_extension>.json`.
+A sample input file can be found in `sample_redaction/sample_input/`. Sample output files (JSON and HTML) from utilizing the llama3.2 model can be found in `sample_redaction/sample_output/llama3.2/<prompt_type>/<timestamp>`. Sample raw LLM response output files can be found in `sample_redaction/sample_output/llama3.2/<prompt_type>/<timestamp>/llm_raw_response/<output_filename>-<output_file_extension>.json`.
 
 ```
 sample_redaction
    |-- sample_input
    |   |-- test.txt
    |-- sample_output
-   |   |-- default
-   |   |   |-- llama3.2
-   |   |   |   |-- llm_raw_response
-   |   |   |   |   |-- test_0-html.json
-   |   |   |   |   |-- test_0-json.json
-   |   |   |   |   |-- test_1-html.json
-   |   |   |   |   |-- test_1-json.json
-   |   |   |   |   |-- test_2-html.json
-   |   |   |   |   |-- test_2-json.json
-   |   |   |   |   |-- test_3-html.json
-   |   |   |   |   |-- test_3-json.json
-   |   |   |   |-- test_0.html
-   |   |   |   |-- test_0.json
-   |   |   |   |-- test_1.html
-   |   |   |   |-- test_1.json
-   |   |   |   |-- test_2.html
-   |   |   |   |-- test_2.json
-   |   |   |   |-- test_3.html
-   |   |   |   |-- test_3.json
-   |   |   |   |-- test_lenient.html
-   |   |   |   |-- test_lenient.json
-   |   |   |   |-- test_majority.html
-   |   |   |   |-- test_majority.json
-   |   |   |   |-- test_restrictive.html
-   |   |   |   |-- test_restrictive.json
-   |   |   |   |-- test_threshold.html
-   |   |   |   |-- test_threshold.json
+   |   |-- llama3.2
+   |   |   |-- default
+   |   |   |   |-- 20260326_16_45_08
+   |   |   |   |   |-- test
+   |   |   |   |   |   |-- llm_raw_response
+   |   |   |   |   |   |   |-- test_0-json.json
+   |   |   |   |   |   |   |-- test_1-json.json
+   |   |   |   |   |   |   |-- test_2-json.json
+   |   |   |   |   |   |   |-- test_3-json.json
+   |   |   |   |   |   |-- test_0.json
+   |   |   |   |   |   |-- test_1.json
+   |   |   |   |   |   |-- test_2.json
+   |   |   |   |   |   |-- test_3.json
+   |   |   |   |   |   |-- test_lenient.json
+   |   |   |   |   |   |-- test_majority.json
+   |   |   |   |   |   |-- test_restrictive.json
+   |   |   |   |   |   |-- test_threshold_75_percent.json
    
 
 ```
@@ -72,15 +62,15 @@ Please see the [prompts](prompts/) for the provided prompt options or [sample_cu
 ### Sample Output Files
 See `process_file_json_out()` and `process_file_html_out()` in [process_out.py](./scripts/process/process_out.py) for full details on how the output JSON/HTML files are created.
 
-An output JSON file, for example [test_0.json](sample_redaction/sample_output/llama3.2/default/test/test_0.json) contains:
+An output JSON file, for example [test_0.json](sample_redaction/sample_output/llama3.2/default/20260326_16_45_08/test/test_0.json) contains:
 - An `entities` key, which contains a parsed list of dictionaries, where `type` contains the category of PII that was identified and `value` contains the words that comprise the identified PII.
 - A `source_text` key, which contains the original text from the input file.
 - A `redacted_text` key, which contains the source text from the input file, but with `<PII>` replacing all the identified PII entities (see `redact_text()` in [redaction.py](redaction.py)).
 - An `errors` key, which will contain a string of the error message that occurred when trying to parse the model's LLM output. The `entities` list should be empty if errors is not an empty list. If an error occurs, the llm_raw_response file is still created.
 
-An output HTML file, for example [test_0.html](sample_redaction/sample_output/llama3.2/default/test/test_0.html), contains the text from the input file with the predicted entities in purple.
+An output HTML file, for example [test_0.html](sample_redaction/sample_output/llama3.2/default/20260326_16_45_16/test/test_0.html), contains the text from the input file with the predicted entities in purple.
 
-The [test_0-html.json](sample_redaction/sample_output/llama3.2/default/test/llm_raw_response/test_0-html.json) and [test_0-json.json](sample_redaction/sample_output/llama3.2/default/test/llm_raw_response/test_0-json.json) files contain the raw LLM response when running the tool with llama3.2 on test.html and test.json respectively. See `llm_message_out()` in [process_out.py](./scripts/process/process_out.py) for further details.
+The [test_0-json.json](sample_redaction/sample_output/llama3.2/default/20260326_16_45_08/test/llm_raw_response/test_0-json.json) and [test_0-html.json](sample_redaction/sample_output/llama3.2/default/20260326_16_45_16/test/llm_raw_response/test_0-html.json) files contain the raw LLM response when running the tool with llama3.2 on test.html and test.json respectively. See `llm_message_out()` in [process_out.py](./scripts/process/process_out.py) for further details.
 
 # Installation
 ## Without Docker
@@ -184,7 +174,7 @@ options:
 | input_paths | List of paths to input files or directories. If a directory is specified, only files with the `.txt` extension are processed. | None |
 | -h | If included, describes the script's args. | None |
 | -o | Output directory where JSON result files will be written. | "/data/output" |
-| --model | The language model to use. | "phi4 |
+| --model | The language model to use. | "phi4" |
 | --output_format | Defines the output file type. It must either be JSON or HTML. | JSON |
 | --temperature | The temperature (creativity) of the model. | None, Ollama defaults to 0.8. |
 | --seed | The random number seed to use for generation. | None, Ollama defaults to a random value. |
@@ -238,7 +228,7 @@ The `scripts.process.redaction.run_redaction()`  function takes in an input path
 | output_dir | str | Output directory where output files (HTML or JSON) will be written. | "./sample_redaction/sample_output" |
 | output_format | str | Defines the output file type. It must either be JSON or HTML. | JSON |
 | model | str | The language model to use. | phi4 |
-| prompt_type | str | Prompt to be passed to the LLM. (Options:: "default", "few_shot", "one_shot", "custom") | "default" |
+| prompt_type | str | Prompt to be passed to the LLM. (Options: "default", "few_shot", "one_shot", "custom") | "default" |
 | num_runs | int | The number of times to run the redaction on each file. | 1 |
 | aggregation | str | If num_runs > 1, the aggregation method used to summarize the runs for each file. (Options: "restrictive", "threshold", "majority", "lenient") | "restrictive" |
 | threshold | float | If aggregation type is "threshold", the threshold desired (i.e. 0.35, 0.75) | 0.5 |
@@ -305,10 +295,10 @@ If you would like to re-aggregate previous multiple runs using a different thres
 For instance, you could run:
 ```sh
 cd scripts
- python run_aggregate.py --output_dir ../out/llama3.2/default --aggregation lenient
+ python run_aggregate.py --output_dir ../out/phi4/default --aggregation lenient
 ```
 
-This assumes that `../out/llama3.2/default` holds files from a previous run where each file was processed more than once. 
+This assumes that `../out/phi4/default` holds files from a previous run where each file was processed more than once. 
 
 # Calculate Performance Metrics on pii-masking-300k
 If you are not already logged into the Hugging Face CLI from your machine, you will need to provide a user token. To create and access your user token, follow the steps below:
