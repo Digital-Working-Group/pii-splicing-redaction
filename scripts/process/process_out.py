@@ -99,7 +99,7 @@ def process_path_out(input_path: Path, output_dir: Path, model: str, options: di
         redact_items = aggregate_runs(output_format, files_created, aggregation, threshold)
         agg_out_filepath = output_dir / f'{file_stem}_{aggregation}.{output_format}'
         if aggregation == 'threshold':
-            agg_out_filepath = output_dir / f'{file_stem}_{aggregation}_{int(threshold*100)}_percent.{output_format}'
+            agg_out_filepath = output_dir / f'{file_stem}_{aggregation}_{int(float(threshold)*100)}_percent.{output_format}'
         process_aggregate_result(agg_out_filepath, output_format, text, redact_items, total_entities)
 
 def process_input_path(input_path, redaction_config):
