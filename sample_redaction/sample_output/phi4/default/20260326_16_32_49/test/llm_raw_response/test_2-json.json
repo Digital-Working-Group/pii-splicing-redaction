@@ -1,0 +1,18 @@
+{
+    "model": "phi4",
+    "created_at": "2026-03-26T16:32:53.755869102Z",
+    "done": true,
+    "done_reason": "stop",
+    "total_duration": 883235483,
+    "load_duration": 28056080,
+    "prompt_eval_count": 439,
+    "prompt_eval_duration": 13172754,
+    "eval_count": 37,
+    "eval_duration": 837321301,
+    "message": {
+        "role": "assistant",
+        "content": "```json\n[\n    {\"type\": \"first_name\", \"value\": \"Sarah\"},\n    {\"type\": \"full_name\", \"value\": \"Ethan Rivers\"}\n]\n```",
+        "images": null,
+        "tool_calls": null
+    }
+}

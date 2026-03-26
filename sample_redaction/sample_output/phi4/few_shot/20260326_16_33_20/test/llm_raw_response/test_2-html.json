@@ -1,0 +1,18 @@
+{
+    "model": "phi4",
+    "created_at": "2026-03-26T16:33:25.361187556Z",
+    "done": true,
+    "done_reason": "stop",
+    "total_duration": 1897626191,
+    "load_duration": 27259308,
+    "prompt_eval_count": 613,
+    "prompt_eval_duration": 14459878,
+    "eval_count": 80,
+    "eval_duration": 1850055044,
+    "message": {
+        "role": "assistant",
+        "content": "```json\n[\n    {\"type\": \"first_name\", \"value\": \"Sarah\"},\n    {\"type\": \"first_name\", \"value\": \"Ethan\"},\n    {\"type\": \"last_name\", \"value\": \"Rivers\"},\n    {\"type\": \"location\", \"value\": \"Lake Serenity\"},\n    {\"type\": \"location\", \"value\": \"Cascade Valley\"}\n]\n```",
+        "images": null,
+        "tool_calls": null
+    }
+}

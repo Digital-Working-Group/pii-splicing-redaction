@@ -1,0 +1,18 @@
+{
+    "model": "llama3.2",
+    "created_at": "2026-03-26T16:45:16.205975471Z",
+    "done": true,
+    "done_reason": "stop",
+    "total_duration": 696026599,
+    "load_duration": 33527729,
+    "prompt_eval_count": 448,
+    "prompt_eval_duration": 5138987,
+    "eval_count": 74,
+    "eval_duration": 655858547,
+    "message": {
+        "role": "assistant",
+        "content": "[\n    {\"type\": \"last_name\", \"value\": \"Rivers\"},\n    {\"type\": \"first_name\", \"value\": \"Ethan\"},\n    {\"type\": \"sex\", \"value\": \"male\"},\n    {\"type\": \"location\", \"value\": \"Cascade Valley\"},\n    {\"type\": \"last_name\", \"value\": \"Sarah\"}\n]",
+        "images": null,
+        "tool_calls": null
+    }
+}
