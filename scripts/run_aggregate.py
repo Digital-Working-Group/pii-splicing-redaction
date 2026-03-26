@@ -7,7 +7,7 @@ from process.aggregate import run_aggregation
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument("-o", "--output_dir", default="out/llama3.2")
+    parser.add_argument("-o", "--output_dir", default="out/phi_4")
     parser.add_argument("--output_format", choices=["json", "html"], default="json")
     parser.add_argument("--aggregation", choices=['restrictive', 'threshold', 'majority', 'lenient'], default="restrictive")
     parser.add_argument("--threshold", default=None)

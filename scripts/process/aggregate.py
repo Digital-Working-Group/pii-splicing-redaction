@@ -20,15 +20,18 @@ def run_aggregation(output_format, output_dir, aggregation, threshold):
     output_dir = Path(output_dir)
     for subdir in output_dir.iterdir():
         if subdir.is_dir():
-            files = process_previously_generated(subdir, output_format)
-            if len(files) > 1:
-                file_stem = files[0].stem.split("_")[0]
-                agg_out_filepath = output_dir / subdir.name / f'{file_stem}_{aggregation}.{output_format}'
-                text, total_entities = get_data_from_result(output_format, files)
-                redact_items = aggregate_runs(output_format, files, aggregation, threshold)
-                process_aggregate_result(agg_out_filepath, output_format, text, redact_items, total_entities)
-            else:
-                print(f'Not enough files to perform aggregation in {subdir}. Found {len(files)} and need at least 2.')
+            file_dict = process_previously_generated(subdir, output_format)
+            for file_dir, files in file_dict.items():
+                if len(files) > 1:
+                    file_stem = files[0].stem.split("_")[0]
+                    agg_out_filepath = file_dir / f'{file_stem}_{aggregation}.{output_format}'
+                    if aggregation == "threshold":
+                        agg_out_filepath = file_dir / f'{file_stem}_{aggregation}_{int(threshold*100)}_percent.{output_format}'
+                    text, total_entities = get_data_from_result(output_format, files)
+                    redact_items = aggregate_runs(output_format, files, aggregation, threshold)
+                    process_aggregate_result(agg_out_filepath, output_format, text, redact_items, total_entities)
+                else:
+                    print(f'Not enough files to perform aggregation in {subdir}. Found {len(files)} and need at least 2.')
         else:
             print(f'Skipping {subdir}, not a directory.')
 
@@ -46,7 +49,7 @@ def filter_pii(threshold, total_runs, counts_dict):
     """Calculates the percentage of runs that count a word as PII and compares to the redaction threshold"""
     redact_list = []
     for pii_text, count in counts_dict.items():
-        if count/total_runs >= threshold:
+        if count/total_runs >= float(threshold):
             redact_list.append(pii_text)
     return redact_list
 

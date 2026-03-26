@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 from dataclasses import asdict
 from typing import TextIO
+from datetime import datetime
 from process.reports import generate_html_report, generate_json_report
 import process.llm as llm
 import config.pii_identification as pii_identification
@@ -65,12 +66,13 @@ def process_file_html_out(text: str, entities: list, error_msg: str, output_file
 
 def process_path_out(input_path: Path, output_dir: Path, model: str, options: dict, output_format: str):
     """Creates output directory write JSON or HTML file."""
+    timestamp = datetime.now().strftime("%Y%m%d_%H_%M_%S")
     files_created = []
     aggregation = options.get("aggregation", "restrictive")
     threshold = options.get("threshold", 0)
     prompt = options.get("prompt_type", "default")
     file_stem = f'{input_path.stem}'
-    output_dir = output_dir / model / prompt / file_stem
+    output_dir = output_dir / model / prompt / timestamp / file_stem 
     total_entities = []
     for i in range(options.get('num_runs')):
         ## Create output directory
@@ -79,7 +81,7 @@ def process_path_out(input_path: Path, output_dir: Path, model: str, options: di
         else:
             out_filepath = output_dir / f'{file_stem}_{i}.{output_format}'
         Path(output_dir).mkdir(parents=True, exist_ok=True)
-
+        print(f'Made {output_dir}')
         with open(input_path, encoding='utf-8') as input_file, open(out_filepath, "w", encoding='utf-8') as out_file:
             ## Get LLM response are parse for entities
             text, response = get_text_and_response(input_file, model, options)
@@ -96,6 +98,8 @@ def process_path_out(input_path: Path, output_dir: Path, model: str, options: di
     if options.get('num_runs') > 1:
         redact_items = aggregate_runs(output_format, files_created, aggregation, threshold)
         agg_out_filepath = output_dir / f'{file_stem}_{aggregation}.{output_format}'
+        if aggregation == 'threshold':
+            agg_out_filepath = output_dir / f'{file_stem}_{aggregation}_{int(threshold*100)}_percent.{output_format}'
         process_aggregate_result(agg_out_filepath, output_format, text, redact_items, total_entities)
 
 def process_input_path(input_path, redaction_config):

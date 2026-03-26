@@ -2,17 +2,19 @@
 from pathlib import Path
 import re
 import json
+from collections import defaultdict
 from config.pii_identification import Entity
 from bs4 import BeautifulSoup as bsoup
 
 def process_previously_generated(input_dir, output_format):
     """Collect multiple previous runs on the same file"""
-    files = []
-    for item in input_dir.iterdir():
+    files = defaultdict(list)
+    for item in input_dir.rglob('*'):
         if item.is_file():
+            parent = Path(item).parent
             if output_format == "json" and re.match('.*\d+\.json$', item.name) \
             or output_format == "html" and re.match('.*\d+\.html$', item.name):
-                files.append(item)
+                files[parent].append(item)
     return files
 
 def get_html_text(file):
