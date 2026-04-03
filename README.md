@@ -283,13 +283,13 @@ if __name__ == '__main__':
 See [Sample Input and Output Files](#sample-input-and-output-files) for more information on input and output files.
 
 # Multiple Runs
-This tool supports the option to run N times on the same text and aggregate the results with a specified threshold. The threshold options include:
-| Name | Threshold value |
-|--|--|
-| restrictive | 0 |
-| majority | 0.5 |
-| lenient | 1 |
-| threshold | user provided threshold |
+This tool supports the option to run N times on the same text and aggregate the results with a specified threshold. PII must be deteched in N x the threshold to be redacted in the aggregate file. The threshold options include:
+| Name | Threshold value | Explanation |
+|--|--|--|
+| restrictive | 0 | PII that is identified at least once in any run will be redacted. |
+| majority | 0.5 | PII that is identified in at least 50% of runs will be redacted (N x 0.5) |
+| lenient | 1 | PII that is identified in 100% of runs will be redacted (N x 1) |
+| threshold | user provided threshold (t) | PII that occurs in at least (t x 100)% of runs will be redacted (N x t) |
 
 If you would like to re-aggregate previous multiple runs using a different threshold value, see [scripts/run_aggregate](./scripts/run_aggregate.py). This takes in described above for running `main.py` using the CLI, allowing you to redefine which aggregation threshold to use. 
 For instance, you could run:
