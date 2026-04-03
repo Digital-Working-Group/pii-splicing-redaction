@@ -26,7 +26,7 @@ def generate_json_report(text: str, entities: list, redact_list=None):
     If a redaction list exists, edit the entities to only contain items
     from the redact list"""
     seen = set()
-    if redact_list:
+    if redact_list != None:
         ## Add one copy of each entitiy to redact to entities
         entities = [e for e in entities 
                     if e.value in redact_list and not(e.value in seen or seen.add(e.value))]
