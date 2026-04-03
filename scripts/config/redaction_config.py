@@ -34,8 +34,8 @@ class RedactionConfig:
         if self.threshold is not None:
             self.options["threshold"] = self.threshold
         if self.temperature is not None:
-            self.options["temperature"] = self.temperature
+            self.options["temperature"] = float(self.temperature)
         if self.seed is not None:
-            self.options["seed"] = self.seed
+            self.options["seed"] = int(self.seed)
         if self.prompt_fp is not None:
             self.options["prompt_fp"] = self.prompt_fp
